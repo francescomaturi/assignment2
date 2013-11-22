@@ -1,4 +1,4 @@
-package assignment2;
+package assignment2.model;
 
 import java.util.Date;
 
@@ -9,6 +9,8 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import assignment2.adapter.DateAdapter;
 
 @XmlRootElement
 @Entity

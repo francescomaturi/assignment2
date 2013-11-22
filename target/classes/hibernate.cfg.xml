@@ -14,8 +14,8 @@
 		<property name="show_sql">true</property>
 		<property name="format_sql">true</property>
 
-		<mapping class="assignment2.Person" />
-		<mapping class="assignment2.HealthProfile" />
+		<mapping class="assignment2.model.Person" />
+		<mapping class="assignment2.model.HealthProfile" />
 
 	</session-factory>
 </hibernate-configuration>
