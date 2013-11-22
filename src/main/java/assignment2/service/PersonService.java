@@ -36,25 +36,12 @@ public class PersonService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response createPerson(Person person) {
-
+		// controllo perche magari non me la parsa correttamente JAXB
 		if (person.getBirthdate() != null) {
-			// controllo perche magari non me la parsa correttamente JAXB
+			// se me l'hai passato lo annullo perche me lo genera il DB
+			person.setPerson_id(null);
+
 			person = HibernateUtil.savePerson(person);
-			return Response.status(Response.Status.OK).entity(person).build();
-
-		} else {
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		}
-	}
-
-	@PUT
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response updatePerson(Person person) {
-
-		if (person.getPerson_id() != null && person.getBirthdate() != null) {
-
-			person = HibernateUtil.updatePerson(person);
 			return Response.status(Response.Status.OK).entity(person).build();
 
 		} else {
@@ -80,6 +67,25 @@ public class PersonService {
 			}
 		}
 		return p;
+	}
+
+	@PUT
+	@Path("/{p_id}")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response updatePerson(@PathParam("p_id") Long p_id, Person person) {
+
+		Person p = HibernateUtil.getPerson(p_id);
+
+		if (p != null && p.getPerson_id().equals(person.getPerson_id())
+				&& person.getBirthdate() != null) {
+
+			person = HibernateUtil.updatePerson(person);
+			return Response.status(Response.Status.OK).entity(person).build();
+
+		} else {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
 	}
 
 	@GET
