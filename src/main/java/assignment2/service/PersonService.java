@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -32,24 +33,18 @@ public class PersonService {
 	}
 
 	@POST
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response addPerson(@QueryParam("firstname") String firstname,
-			@QueryParam("lastname") String lastname,
-			@QueryParam("birthdate") String birthdate) throws ParseException {
+	public Response createPerson(Person person) {
 
-		if (firstname != null && lastname != null && birthdate != null
-				&& birthdate.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
+		if (person.getBirthdate() != null) {
+			// .matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")){
 
-			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-
-			Date date = df.parse(birthdate);
-
-			Person p = HibernateUtil.addPerson(new Person(firstname, lastname,
-					date));
-
-			return Response.status(Response.Status.OK).entity(p).build();
+			person = HibernateUtil.addPerson(person);
+			return Response.status(Response.Status.OK).entity(person).build();
 
 		} else {
+
 			String json = "{\"birthdate\":\"dd-mm-yyyy\",\"q\":\"/person?firstname=name&lastname=surname&birthdate=dd-mm-yyyy\"}";
 			return Response.status(400).entity(json).build();
 		}

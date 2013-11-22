@@ -30,10 +30,11 @@
 			</thead>
 			<tbody>
 				<% _.each(person, function(p){ %>
-					<tr>
-						<td><%= p.get('firstname')%></td>
-						<td><%= p.get('lastname')%></td>
-						<td><%= p.get('birthdate')%></td>
+					
+						<tr>
+						<td><%= p.get('firstname') %></td>
+						<td><%= p.get('lastname') %></td>
+						<td><%= p.get('birthdate') %></td>
 						<td></td>
 					</tr>
 				<% })%>
@@ -68,26 +69,26 @@
 			// 	options.xhrFields = {
 			//     withCredentials: true
 			// 	};
-
-			options.url = "http://localhost:8080/RESTService/rest"
-					+ options.url;
+			options.url = "http://localhost:8080/RESTService/" + options.url;
 		});
 
 		var Persons = Backbone.Collection.extend({
-			url : '/person'
-		})
+			url : 'rest/person'
+		});
+
+		var People = Backbone.Collection.extend({});
 
 		var PersonList = Backbone.View.extend({
 			el : '.page',
 			render : function() {
-				console.log("DENTRO RENDER!");
-				that = this;
-				var persons = new Persons();
-				persons.fetch({
-					success : function(person) {
+				var that = this;
+				var people = new Persons();
+
+				people.fetch({
+					success : function(people) {
 						var template = _.template($('#person-list-template')
 								.html(), {
-							person : person.models
+							person : people.models
 						});
 						that.$el.html(template);
 					}

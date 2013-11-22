@@ -19,7 +19,6 @@ public class HealthProfile {
 
 	@Id
 	@GeneratedValue
-	@XmlTransient
 	private Long healthprofile_id;
 
 	private Long person_id;
