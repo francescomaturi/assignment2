@@ -38,15 +38,27 @@ public class PersonService {
 	public Response createPerson(Person person) {
 
 		if (person.getBirthdate() != null) {
-			// .matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")){
-
-			person = HibernateUtil.addPerson(person);
+			// controllo perche magari non me la parsa correttamente JAXB
+			person = HibernateUtil.savePerson(person);
 			return Response.status(Response.Status.OK).entity(person).build();
 
 		} else {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+	}
 
-			String json = "{\"birthdate\":\"dd-mm-yyyy\",\"q\":\"/person?firstname=name&lastname=surname&birthdate=dd-mm-yyyy\"}";
-			return Response.status(400).entity(json).build();
+	@PUT
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response updatePerson(Person person) {
+
+		if (person.getPerson_id() != null && person.getBirthdate() != null) {
+
+			person = HibernateUtil.updatePerson(person);
+			return Response.status(Response.Status.OK).entity(person).build();
+
+		} else {
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 	}
 

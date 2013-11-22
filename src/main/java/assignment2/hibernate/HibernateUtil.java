@@ -36,7 +36,7 @@ public class HibernateUtil {
 		sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 	}
 
-	public static Person addPerson(Person person) {
+	public static Person savePerson(Person person) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = null;
 
@@ -45,6 +45,30 @@ public class HibernateUtil {
 
 			Long id = (Long) session.save(person);
 			person.setPerson_id(id);
+
+			transaction.commit();
+
+		} catch (HibernateException e) {
+			// rollback transaction
+			if (transaction != null) {
+				transaction.rollback();
+			}
+		} finally {
+			session.close();
+		}
+
+		return person;
+	}
+
+	public static Person updatePerson(Person person) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+
+		try {
+			transaction = session.beginTransaction();
+
+			session.update(person);
+			person = (Person) session.get(Person.class, person.getPerson_id());
 
 			transaction.commit();
 
