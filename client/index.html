@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Assignment 2 RESTServer</title>
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript" src="js/underscore.js"></script>
+<script type="text/javascript" src="js/backbone.js"></script>
+</head>
+<body>
+	<div class="container">
+		<h1>Person Manager</h1>
+		<hr />
+		<div class="page"></div>
+	</div>
+
+	<script type="text/template" id="person-list-template">
+		<a href="#/newPerson" class="btn btn-success">New Person</a>
+		<hr/>
+		<table class="table striped">
+			<thead>
+				<tr>
+					<th>Firstname</th>
+					<th>Lastname</th>
+					<th>Birthdate</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<% _.each(person, function(p){ %>
+					<tr>
+						<td><%= p.get('firstname')%></td>
+						<td><%= p.get('lastname')%></td>
+						<td><%= p.get('birthdate')%></td>
+						<td></td>
+					</tr>
+				<% })%>
+			</tbody>
+		</table>
+	</script>
+
+	<script type="text/template" id="new-person-template">
+		<a href="#" class="btn">Back to person list</a>
+		<br/><br/>
+		<form class="new-person-form">
+			<legend>Crete Person</legend>
+			<label>Firstname</label>
+			<input type="text" name="firstname"/>
+			<label>Lastname</label>
+			<input type="text" name="lastname"/>
+			<label>Birthdate</label>
+			<input type="text" name="birthdate"/>
+			<hr/>
+			<button type="submit" class="btn btn-large btn-success">Create Person</button>
+		</form>
+	</script>
+
+	<script type="text/javascript">
+
+		$.fn.serializeObject = function(){
+      var o = {};
+      var a = this.serializeArray();
+      $.each(a, function() {
+          if (o[this.name] !== undefined) {
+              if (!o[this.name].push) {
+                  o[this.name] = [o[this.name]];
+              }
+              o[this.name].push(this.value || '');
+          } else {
+              o[this.name] = this.value || '';
+          }
+      });
+      return o;
+    };
+
+		$.ajaxPrefilter(function(options, originalOptions, jqXR) {
+
+			options.url = "http://192.168.31.2:5900" + options.url;
+		});
+
+		Person = Backbone.Model.extend({
+			urlRoot: '/person'
+		});
+
+		var Persons = Backbone.Collection.extend({
+			model: Person,
+			url : '/person',
+			parse: function(response){
+		    return response.person;
+		  }    
+		})
+
+		var PersonList = Backbone.View.extend({
+			el : '.page',
+			render : function() {
+				that = this;
+				var persons = new Persons();
+				persons.fetch({
+					success : function(person) {
+
+						var template = _.template($('#person-list-template').html(), {
+							person : person.models
+						});
+						that.$el.html(template);
+					}
+				});
+			}
+		});
+
+		var personList = new PersonList();
+
+		var NewPerson = Backbone.View.extend({
+			el : '.page',
+			render : function(){
+				var template = _.template($('#new-person-template').html(), {});
+				this.$el.html(template);
+			},
+			events : {
+				'submit .new-person-form' : 'savePerson'
+			},
+			savePerson : function(ev){
+				personDetails = $(ev.currentTarget).serializeObject();
+				console.log(personDetails);
+				var person = new Person();
+				person.save(personDetails, {
+					success : function(user){
+						router.navigate('', {trigger:true});
+					}
+				}) 
+				return false;
+			}
+		});
+
+		var newPerson = new NewPerson();
+
+		
+		var Router = Backbone.Router.extend({
+			routes : {
+				'' : "home",
+				'newPerson' : "newPerson"
+			}
+		});
+
+		var router = new Router();
+		router.on('route:home', function() {
+			personList.render();
+		});
+		router.on('route:newPerson', function() {
+			newPerson.render();
+		});
+
+		Backbone.history.start();
+	</script>
+</body>
+</html>
