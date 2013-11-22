@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<title>Assignment 2 RESTServer</title>
-	<link href="css/bootstrap.css" rel="stylesheet">
-	<link href="css/bootstrap-responsive.css" rel="stylesheet">
-	<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
-	<script type="text/javascript" src="js/bootstrap.js"></script>
-	<script type="text/javascript" src="js/json2.js"></script>
-	<script type="text/javascript" src="js/underscore.js"></script>
-	<script type="text/javascript" src="js/backbone.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Assignment 2 RESTServer</title>
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<script type="text/javascript" src="js/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript" src="js/underscore.js"></script>
+<script type="text/javascript" src="js/backbone.js"></script>
 </head>
 <body>
 	<div class="container">
 		<h1>Person Manager</h1>
-		<hr/>
+		<hr />
 		<div class="page"></div>
 	</div>
 
@@ -29,11 +29,11 @@
 				</tr>
 			</thead>
 			<tbody>
-				<% _.each(person_list, function(person){ %>
+				<% _.each(person, function(p){ %>
 					<tr>
-						<td><%= person.get('firstname')%></td>
-						<td><%= person.get('lastname')%></td>
-						<td><%= person.get('birthdate')%></td>
+						<td><%= p.get('firstname')%></td>
+						<td><%= p.get('lastname')%></td>
+						<td><%= p.get('birthdate')%></td>
 						<td></td>
 					</tr>
 				<% })%>
@@ -42,7 +42,6 @@
 	</script>
 
 	<script type="text/javascript">
-
 		// (function() {
 		//   var proxiedSync = Backbone.sync;
 		//   Backbone.sync = function(method, model, options) {
@@ -57,57 +56,59 @@
 		//   };
 		// })();
 
-	  $.ajaxPrefilter(function(options, originalOptions, jqXR){
-	  	// jqXR.setRequestHeader('Accept', 'application/json');
-	  	// jqXR.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
-	  	// jqXR.setRequestHeader('Access-Control-Allow-Methods','OPTIONS, TRACE, GET, HEAD, POST, PUT, DELETE');
-	  	// jqXR.setRequestHeader('Access-Control-Allow-Origin', '*');
+		$.ajaxPrefilter(function(options, originalOptions, jqXR) {
+			// jqXR.setRequestHeader('Accept', 'application/json');
+			// jqXR.setRequestHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, X-Requested-With');
+			// jqXR.setRequestHeader('Access-Control-Allow-Methods','OPTIONS, TRACE, GET, HEAD, POST, PUT, DELETE');
+			// jqXR.setRequestHeader('Access-Control-Allow-Origin', '*');
 
-	  	// options.crossDomain ={
-    //     crossDomain: true
-    // 	};
-    // 	options.xhrFields = {
-    //     withCredentials: true
-    // 	};
-	  	
-	  	options.url = "http://localhost:8080/RESTService/rest" + options.url; 
-	  });
+			// options.crossDomain ={
+			//     crossDomain: true
+			// 	};
+			// 	options.xhrFields = {
+			//     withCredentials: true
+			// 	};
 
-	  var Persons = Backbone.Collection.extend({
-	  	url : '/person'
-	  })
+			options.url = "http://localhost:8080/RESTService/rest"
+					+ options.url;
+		});
+
+		var Persons = Backbone.Collection.extend({
+			url : '/person'
+		})
 
 		var PersonList = Backbone.View.extend({
-			el: '.page',
-			render: function(){
+			el : '.page',
+			render : function() {
 				console.log("DENTRO RENDER!");
 				that = this;
 				var persons = new Persons();
 				persons.fetch({
-					success: function(person_list){
-						console.log("CAZZO!");
-						console.log(person_list);
-						var template = _.template($('#person-list-template').html(), {person_list: person_list.models});
-						this.$el.html(template);
+					success : function(person) {
+						var template = _.template($('#person-list-template')
+								.html(), {
+							person : person.models
+						});
+						that.$el.html(template);
 					}
 				});
 			}
 		});
 
-	  var Router = Backbone.Router.extend({
-	  	routes: {
-	  		'' : "home"
-	  	}
-	  });
+		var Router = Backbone.Router.extend({
+			routes : {
+				'' : "home"
+			}
+		});
 
-	  var personList = new PersonList();
+		var personList = new PersonList();
 
-	  var router = new Router();
-	  router.on('route:home', function(){
-	  	personList.render();
-	  });
+		var router = new Router();
+		router.on('route:home', function() {
+			personList.render();
+		});
 
-	  Backbone.history.start();
+		Backbone.history.start();
 	</script>
 </body>
 </html>
