@@ -1,5 +1,4 @@
 /target
 
-#Ignore stupid Mac stuff
 .DS_Store
 */*.DS_Store
