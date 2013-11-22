@@ -131,7 +131,7 @@ public class HibernateUtil {
 		return people;
 	}
 
-	public static HealthProfile setHealthProfile(HealthProfile hp) {
+	public static HealthProfile createHealthProfile(HealthProfile hp) {
 		Session session = sessionFactory.openSession();
 		Transaction transaction = null;
 
@@ -140,6 +140,30 @@ public class HibernateUtil {
 
 			Long id = (Long) session.save(hp);
 			hp.setHealthprofile_id(id);
+
+			transaction.commit();
+		} catch (HibernateException e) {
+			// rollback transaction
+			if (transaction != null) {
+				transaction.rollback();
+			}
+		} finally {
+			session.close();
+		}
+
+		return hp;
+	}
+
+	public static HealthProfile updateHealthProfile(HealthProfile hp) {
+		Session session = sessionFactory.openSession();
+		Transaction transaction = null;
+
+		try {
+			transaction = session.beginTransaction();
+
+			session.update(hp);
+			hp = (HealthProfile) session.get(HealthProfile.class,
+					hp.getHealthprofile_id());
 
 			transaction.commit();
 		} catch (HibernateException e) {

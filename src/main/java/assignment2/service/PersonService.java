@@ -143,7 +143,7 @@ public class PersonService {
 
 			HealthProfile current_hp = new HealthProfile(p_id, weight, height,
 					new Date());
-			current_hp = HibernateUtil.setHealthProfile(current_hp);
+			current_hp = HibernateUtil.createHealthProfile(current_hp);
 
 			Set<HealthProfile> history = new HashSet<HealthProfile>();
 			history.add(current_hp);
@@ -151,6 +151,47 @@ public class PersonService {
 			p.setHealthProfileHistory(history);
 		}
 
+		return p;
+	}
+
+	@PUT
+	@Path("/{p_id}/healthprofile")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Person updateHealthProfileX(@PathParam("p_id") Long p_id,
+			@QueryParam("height") Double height,
+			@QueryParam("weight") Double weight) {
+
+		Person p = HibernateUtil.getPerson(p_id);
+		if (p != null) {
+
+			HealthProfile hp = HibernateUtil.getCurrentHealthProfile(p_id);
+
+			if (hp != null && height != null & weight != null) {
+				// aggiorno anche la data perche dato che modifico il corrente
+				// healthprofile è giusto aggiornare anche la data
+				hp.setDate(new Date());
+				hp.setHeight(height);
+				hp.setWeight(weight);
+
+				hp = HibernateUtil.updateHealthProfile(hp);
+
+				Set<HealthProfile> history = new HashSet<HealthProfile>();
+				history.add(hp);
+
+				p.setHealthProfileHistory(history);
+			} else if (hp == null && height != null & weight != null) {
+				// if i cannot update the current because it doesn't exixts
+				// creates a new one -> the same thing as you do a post
+				HealthProfile current_hp = new HealthProfile(p_id, weight,
+						height, new Date());
+				current_hp = HibernateUtil.createHealthProfile(current_hp);
+
+				Set<HealthProfile> history = new HashSet<HealthProfile>();
+				history.add(current_hp);
+
+				p.setHealthProfileHistory(history);
+			}
+		}
 		return p;
 	}
 
@@ -171,39 +212,11 @@ public class PersonService {
 				history.add(hp);
 
 				p.setHealthProfileHistory(history);
+
+				return p;
 			}
 		}
-		return p;
-	}
-
-	@PUT
-	@Path("/{p_id}/healthprofile/{hp_id}")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Person updateHealthProfileX(@PathParam("p_id") Long p_id,
-			@PathParam("hp_id") Long hp_id,
-			@QueryParam("height") Double height,
-			@QueryParam("weight") Double weight) {
-
-		Person p = HibernateUtil.getPerson(p_id);
-		if (p != null) {
-
-			HealthProfile hp = HibernateUtil.getSpecificHealthProfile(p_id,
-					hp_id);
-
-			if (hp != null && height != null & weight != null) {
-				hp.setHeight(height);
-				hp.setWeight(weight);
-
-				// TODO scommentare se è da aggiornare anche la data
-				// hp.setDate(new Date());
-
-				Set<HealthProfile> history = new HashSet<HealthProfile>();
-				history.add(hp);
-
-				p.setHealthProfileHistory(history);
-			}
-		}
-		return p;
+		return null;
 	}
 
 }
