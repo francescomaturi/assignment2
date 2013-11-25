@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import assignment2.adapter.BirthDateAdapter;
+import assignment2.hibernate.HealthProfileDB;
 
 @XmlRootElement
 @Entity
@@ -27,9 +28,6 @@ public class Person {
 	private String lastname;
 
 	private Date birthdate;
-
-	private Double height;
-	private Double weight;
 
 	@Transient
 	private ArrayList<HealthProfile> healthProfileHistory;
@@ -51,16 +49,6 @@ public class Person {
 		this.birthdate = birthdate;
 	}
 
-	public Person(String firstname, String lastname, Date birthdate,
-			Double height, Double weight) {
-		super();
-		this.firstname = firstname;
-		this.lastname = lastname;
-		this.birthdate = birthdate;
-		this.height = height;
-		this.weight = weight;
-	}
-
 	public Long getPerson_id() {
 		return person_id;
 	}
@@ -69,24 +57,21 @@ public class Person {
 		this.person_id = person_id;
 	}
 
+	@XmlElement(name = "height")
 	public Double getHeight() {
-		return height;
+		return HealthProfileDB.getProperty("height", person_id);
 	}
 
-	public void setHeight(Double height) {
-		this.height = height;
-	}
-
+	@XmlElement(name = "weight")
 	public Double getWeight() {
-		return weight;
-	}
-
-	public void setWeight(Double weight) {
-		this.weight = weight;
+		return HealthProfileDB.getProperty("weight", person_id);
 	}
 
 	@XmlElement(name = "bmi")
 	public Double getBmi() {
+		Double height = HealthProfileDB.getProperty("height", person_id);
+		Double weight = HealthProfileDB.getProperty("weight", person_id);
+
 		return weight / (height * height);
 	}
 

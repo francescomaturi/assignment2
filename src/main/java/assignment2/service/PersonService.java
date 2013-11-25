@@ -162,12 +162,6 @@ public class PersonService {
 
 			HealthProfileDB.saveHealthProfile(hp);
 
-			// update the current healthprofile
-			p.setHeight(hp.getHeight());
-			p.setWeight(hp.getWeight());
-
-			p = PersonDB.updatePerson(p);
-
 			p.setHealthProfileHistory(HealthProfileDB
 					.getPersonHealthProfileHistory(p_id));
 		}
@@ -191,42 +185,21 @@ public class PersonService {
 		Person person = PersonDB.getPerson(p_id);
 		if (person != null && hp.getWeight() != null && hp.getHeight() != null) {
 
-			HealthProfile isLastInHistory = HealthProfileDB.isCurrent(p_id,
+			HealthProfile old = HealthProfileDB.getSpecificHealthProfile(p_id,
 					hp_id);
+			if (old != null) {
 
-			if (isLastInHistory != null) {
-				// update anche valori correnti
-				person.setHeight(hp.getHeight());
-				person.setWeight(hp.getWeight());
+				old.setHeight(hp.getHeight());
+				old.setWeight(hp.getWeight());
 
-				person = PersonDB.savePerson(person);
+				HealthProfileDB.updateHealthProfile(old);
 
-				isLastInHistory.setHeight(hp.getHeight());
-				isLastInHistory.setWeight(hp.getWeight());
+				person.setHealthProfileHistory(HealthProfileDB
+						.getPersonHealthProfileHistory(p_id));
 
-				HealthProfileDB.updateHealthProfile(isLastInHistory);
-
-			} else {
-				// modifico uno vecchio
-				HealthProfile old = HealthProfileDB.getSpecificHealthProfile(
-						p_id, hp_id);
-				if (old != null) {
-
-					old.setHeight(hp.getHeight());
-					old.setWeight(hp.getWeight());
-
-					HealthProfileDB.updateHealthProfile(old);
-
-				} else {
-					// sto cercando di modificare un healthprofile che non
-					// esiste (non dovrei mai entrare in questo caso !!!)
-					return Response.status(Response.Status.BAD_REQUEST).build();
-				}
+				return Response.status(Response.Status.OK).entity(person)
+						.build();
 			}
-			person.setHealthProfileHistory(HealthProfileDB
-					.getPersonHealthProfileHistory(p_id));
-
-			return Response.status(Response.Status.OK).entity(person).build();
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
