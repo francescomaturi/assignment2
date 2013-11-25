@@ -1,0 +1,47 @@
+<script type="text/template" id="person-list-template">
+		<a href="#/newPerson" class="btn btn-success btn-large">
+			<i class="icon-plus icon-white"></i> New Person
+		</a>
+		
+		<hr/>
+		<table class="table table-hover striped">
+			<thead>
+				<tr>
+				  <th>#</th>
+					<th>Fullname</th>
+					<th>Weight</th>
+					<th>Height</th>
+					<th>BMI</th>
+					<th>Birthdate</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<% _.each(people, function(p, index){ %>
+					<tr>
+					  <td><%= index + 1 %></td>
+						
+						<td><a href="#/showPerson/<%= p.get('person_id') %>">
+							<%= p.get('firstname') + " " + p.get('lastname') %><a/>
+						</td>
+						
+						<td><%= parseFloat(p.get('weight')).toPrecision(5) %></td>
+						<td><%= parseFloat(p.get('height')).toPrecision(5) %></td>
+						<td><%= parseFloat(p.get('bmi')).toPrecision(5) %></td>
+						<td><%= p.get('birthdate')%></td>
+
+						<td>
+							<a href="#/editPerson/<%= p.get('person_id') %>" class="btn btn-primary">
+								<i class="icon-edit icon-white"></i> Edit
+							</a>
+						</td>
+						<td><a href="#/deletePerson/<%= p.get('person_id') %>" class="btn btn-danger"
+								onclick="return confirm('Are you sure?')">
+							<i class="icon-trash icon-white"></i> Delete</a>
+						</td>
+					</tr>
+				<% })%>
+			</tbody>
+		</table>
+	</script>

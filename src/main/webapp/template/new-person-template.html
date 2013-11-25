@@ -1,0 +1,84 @@
+<script type="text/template" id="new-person-template">
+
+		<a href="#" class="btn"><i class="icon-arrow-left"></i> Back to person list</a>
+		<br/><br/>
+		<form class="new-person-form form-horizontal">
+			<legend><%= person ? 'Update' : 'Create' %> Person</legend>
+			
+			<div class="control-group">
+				<label class="control-label" for="inputFirstname">Firstname</label>
+				<div class="controls">
+					<input type="text" id="inputFirstname" name="firstname" placeholder="Firstname"
+						value="<%= person ? person.get('firstname') : '' %>"/>
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label" for="inputLastname">Lastname</label>
+				<div class="controls">
+					<input type="text" name="lastname" id="inputLastname" placeholder="Lastname"
+						value="<%= person ? person.get('lastname') : '' %>"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputBirthdate">Birthdate</label>
+				<div class="controls">
+					<div class="input-append date" id="dp3" 
+						data-date="<%= person ? person.get('birthdate') : '' %>" 
+						data-date-format="dd-mm-yyyy">
+	    			<input class="input" type="text" id="inputBirthdate" placeholder="Birthdate"
+	    				value="<%= person ? person.get('birthdate') : '' %>" name="birthdate">
+	    			<span class="add-on"><i class="icon-th"></i></span>
+	  			</div>
+	  		</div>
+  		</div>
+
+  		<legend><%= person ? 'Update' : 'Create' %> Health Profile</legend>
+
+			<div class="control-group">
+				<label class="control-label" for="inputWeight">Weight</label>
+				<div class="controls">
+					<input type="text" name="weight" id="inputWeight" placeholder="Weight"
+						value="<%= person ? person.get('weight') : '' %>"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputHeight">Height</label>
+				<div class="controls">
+					<input type="text" name="height" id="inputHeight" placeholder="Height"
+						value="<%= person ? person.get('height') : '' %>"/>
+				</div>
+			</div>
+
+			<br/>
+			<% if (person) { %>
+				<input type="hidden" value = "<%= person ? person.get('person_id') : '' %>" name="id"/>
+			<% }; %>
+			
+			<div class="form-actions">
+				<% if (person) { %>
+					<button type="submit" class="btn btn-large btn-primary">
+						<i class="icon-edit icon-white"></i> Update Person
+					</button>
+					
+					<button type="button" class="btn btn-large btn-danger deletePerson" 
+						onclick="return confirm('Are you sure?')">
+						<i class="icon-trash icon-white"></i> Delete Person
+					</button>
+				<% } else { %> 
+					<button type="submit" class="btn btn-large btn-success">Create Person</button>
+				<% } %>
+			</div>
+		</form>
+
+		<script type="text/javascript">
+		  $(document).ready(function(){
+			  window.prettyPrint && prettyPrint();
+			    $('#dp3').datepicker({
+					format: 'dd-mm-yyyy'
+				});
+		  });
+		</script>
+	</script>

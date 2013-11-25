@@ -1,0 +1,94 @@
+<script type="text/template" id="show-person-template">
+		<a href="#" class="btn"><i class="icon-arrow-left"></i> Back to person list</a>
+		<br/><br/>
+		<center><h2>
+			<%= person.get('firstname') + " " + person.get('lastname') + " (" + person.get('birthdate') + ")" %>
+		</h2></center>
+
+		<legend>Current Health Profile</legend>
+		<div class="row-fluid">
+		  <center>
+		  <div class="well" style="margin-bottom:10px; padding-bottom:28px">
+				<div class="span3">
+				  <p class="lead">Weight: <%= parseFloat(person.get('weight')).toPrecision(5) + " kg" %></p>
+				</div>
+				<div class="span3">
+					<p class="lead">Height: <%= parseFloat(person.get('height')).toPrecision(5) + " m" %></p>
+				</div>
+				<div class="span3">
+					<p class="lead">BMI: <%= parseFloat(person.get('bmi')).toPrecision(5) + " kg/m<sup>2</sup>" %></p>
+				</div>
+				<div class="span3">
+					<a href="#/newHealthProfile" class="btn btn-success">
+								<i class="icon-plus icon-white"></i> New Health Profile
+					</a>
+				</div>
+			</div>
+			</center>
+		</div>
+		
+		<br/>
+
+		<br/>
+
+		<legend>Health Profile History </legend>
+
+		<table class="table table-hover striped">
+			<thead>
+				<tr>
+				  <th>#</th>
+					<th>Weight (kg)</th>
+					<th>Height (m)</th>
+					<th>BMI (kg/m<sup>2</sup>)</th>
+					<th>Date</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+
+				<% _.each(person.get('healthProfileHistory'), function(healthProfile, index){ %>
+					<tr>
+						<td><%= index + 1 %></td>
+						
+						<td><%= parseFloat(healthProfile.weight).toPrecision(5) %></td>
+						
+						<td><%= parseFloat(healthProfile.height).toPrecision(5) %></td>
+
+						<td><%= parseFloat(healthProfile.bmi).toPrecision(5) %></td>
+
+						<td><%= healthProfile.date.substring(0,10) %></td>
+
+						<td>
+							<a href="#/editHealthProfile/<%= healthProfile.healthprofile_id %>" class="btn btn-primary">
+								<i class="icon-edit icon-white"></i> Edit
+							</a>
+						</td>
+						<td><a href="#/deletePerson/<%= healthProfile.healthprofile_id %>" class="btn btn-danger"
+								onclick="return confirm('Are you sure?')">
+							<i class="icon-trash icon-white"></i> Delete</a>
+						</td>
+
+					</tr>
+
+				<% }) %> 
+
+			</tbody>
+		</table>
+
+		<br/>
+
+		<div class="form-actions">
+
+			<a href="#/editPerson/<%= person.get('person_id') %>" class="btn btn-primary btn-large">
+				<i class="icon-edit icon-white"></i> Edit Person
+			</a>
+			
+			<a href="#/deletePerson/<%= person.get('person_id') %>" class="btn btn-danger btn-large"
+					onclick="return confirm('Are you sure?')">
+					<i class="icon-trash icon-white"></i> Delete Person
+			</a>
+		
+		</div>
+
+	</script>
