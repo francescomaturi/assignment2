@@ -1,6 +1,5 @@
 package assignment2.model;
 
-import java.text.DecimalFormat;
 import java.util.Date;
 
 import javax.persistence.Entity;

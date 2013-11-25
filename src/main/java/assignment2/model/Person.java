@@ -1,7 +1,7 @@
 package assignment2.model;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,8 +27,11 @@ public class Person {
 
 	private Date birthdate;
 
+	private Double height;
+	private Double weight;
+
 	@Transient
-	private Set<HealthProfile> healthProfileHistory;
+	private ArrayList<HealthProfile> healthProfileHistory;
 
 	public Person() {
 		super();
@@ -47,12 +50,38 @@ public class Person {
 		this.birthdate = birthdate;
 	}
 
+	public Person(String firstname, String lastname, Date birthdate,
+			Double height, Double weight) {
+		super();
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.birthdate = birthdate;
+		this.height = height;
+		this.weight = weight;
+	}
+
 	public Long getPerson_id() {
 		return person_id;
 	}
 
 	public void setPerson_id(Long person_id) {
 		this.person_id = person_id;
+	}
+
+	public Double getHeight() {
+		return height;
+	}
+
+	public void setHeight(Double height) {
+		this.height = height;
+	}
+
+	public Double getWeight() {
+		return weight;
+	}
+
+	public void setWeight(Double weight) {
+		this.weight = weight;
 	}
 
 	public String getFirstname() {
@@ -80,12 +109,12 @@ public class Person {
 		this.birthdate = birthdate;
 	}
 
-	public Set<HealthProfile> getHealthProfileHistory() {
+	public ArrayList<HealthProfile> getHealthProfileHistory() {
 		return healthProfileHistory;
 	}
 
-	public void setHealthProfileHistory(Set<HealthProfile> healthProfileHistory) {
+	public void setHealthProfileHistory(
+			ArrayList<HealthProfile> healthProfileHistory) {
 		this.healthProfileHistory = healthProfileHistory;
 	}
-
 }

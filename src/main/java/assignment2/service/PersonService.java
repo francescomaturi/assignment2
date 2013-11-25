@@ -1,47 +1,59 @@
 package assignment2.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import assignment2.hibernate.HibernateUtil;
+import assignment2.hibernate.HealthProfileDB;
+import assignment2.hibernate.PersonDB;
 import assignment2.model.HealthProfile;
 import assignment2.model.Person;
 
 @Path("/person")
 public class PersonService {
 
+	/**
+	 * GET POST
+	 * 
+	 * /person
+	 */
+
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeople() {
 
-		return HibernateUtil.getPeople();
+		return PersonDB.getPeople();
 	}
 
 	@POST
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response createPerson(Person person) {
-		// controllo perche magari non me la parsa correttamente JAXB
-		if (person.getBirthdate() != null) {
+		// controllo perche magari non mi parsa la data correttamente JAXB
+		if (person.getBirthdate() != null && person.getWeight() != null
+				&& person.getHeight() != null) {
 			// se me l'hai passato lo annullo perche me lo genera il DB
 			person.setPerson_id(null);
+			person = PersonDB.savePerson(person);
 
-			person = HibernateUtil.savePerson(person);
+			HealthProfileDB.saveHealthProfile(new HealthProfile(person
+					.getPerson_id(), person.getWeight(), person.getHeight(),
+					new Date()));
+
+			person.setHealthProfileHistory(HealthProfileDB
+					.getPersonHealthProfileHistory(person.getPerson_id()));
+
 			return Response.status(Response.Status.OK).entity(person).build();
 
 		} else {
@@ -49,24 +61,18 @@ public class PersonService {
 		}
 	}
 
+	/**
+	 * GET PUT DELETE
+	 * 
+	 * /person/id
+	 */
+
 	@GET
 	@Path("/{p_id}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Person getPerson(@PathParam("p_id") Long p_id) {
 
-		Person p = HibernateUtil.getPerson(p_id);
-		if (p != null) {
-
-			HealthProfile hp = HibernateUtil.getCurrentHealthProfile(p_id);
-
-			if (hp != null) {
-				Set<HealthProfile> history = new HashSet<HealthProfile>();
-				history.add(hp);
-
-				p.setHealthProfileHistory(history);
-			}
-		}
-		return p;
+		return PersonDB.getPerson(p_id);
 	}
 
 	@PUT
@@ -75,12 +81,21 @@ public class PersonService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updatePerson(@PathParam("p_id") Long p_id, Person person) {
 
-		Person p = HibernateUtil.getPerson(p_id);
+		Person p = PersonDB.getPerson(p_id);
 
 		if (p != null && p.getPerson_id().equals(person.getPerson_id())
-				&& person.getBirthdate() != null) {
+				&& person.getBirthdate() != null && person.getWeight() != null
+				&& person.getHeight() != null) {
 
-			person = HibernateUtil.updatePerson(person);
+			person = PersonDB.updatePerson(person);
+
+			HealthProfileDB.saveHealthProfile(new HealthProfile(person
+					.getPerson_id(), person.getWeight(), person.getHeight(),
+					new Date()));
+
+			person.setHealthProfileHistory(HealthProfileDB
+					.getPersonHealthProfileHistory(p_id));
+
 			return Response.status(Response.Status.OK).entity(person).build();
 
 		} else {
@@ -88,135 +103,199 @@ public class PersonService {
 		}
 	}
 
+	@DELETE
+	@Path("/{p_id}")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response deletePerson(@PathParam("p_id") Long p_id) {
+
+		Person person = PersonDB.deletePerson(p_id);
+		if (person != null) {
+
+			ArrayList<HealthProfile> history = HealthProfileDB
+					.getPersonHealthProfileHistory(p_id);
+
+			person.setHealthProfileHistory(history);
+
+			HealthProfileDB.deletePersonHealthProfileHistory(history);
+
+			return Response.status(Response.Status.OK).entity(person).build();
+
+		} else {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+	}
+
+	/**
+	 * GET POST
+	 * 
+	 * /person/id/healthprofile
+	 */
+
 	@GET
 	@Path("/{p_id}/healthprofile")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Person getHealthProfile(@PathParam("p_id") Long p_id,
-			@QueryParam("before") String before,
-			@QueryParam("after") String after) throws ParseException {
+	public Person getPersonHealthProfileHistory(@PathParam("p_id") Long p_id) {
 
-		Person p = HibernateUtil.getPerson(p_id);
-		if (p != null) {
+		Person person = PersonDB.getPerson(p_id);
+		if (person != null) {
 
-			SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-
-			Set<HealthProfile> history;
-
-			if (before != null && after != null
-					&& before.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")
-					&& after.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
-
-				history = HibernateUtil.getPersonHealthProfileBefore(p_id,
-						df.parse(before), df.parse(after));
-
-			} else if (before != null
-					&& before.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
-
-				history = HibernateUtil.getPersonHealthProfileBefore(p_id,
-						df.parse(before), null);
-
-			} else if (after != null
-					&& after.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
-
-				history = HibernateUtil.getPersonHealthProfileBefore(p_id,
-						null, df.parse(after));
-
-			} else {
-
-				history = HibernateUtil.getPersonHealthProfileHistory(p_id);
-			}
-			p.setHealthProfileHistory(history);
+			person.setHealthProfileHistory(HealthProfileDB
+					.getPersonHealthProfileHistory(p_id));
 		}
-		return p;
+		return person;
 	}
 
 	@POST
 	@Path("/{p_id}/healthprofile")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Person setHealthProfile(@PathParam("p_id") Long p_id,
-			@QueryParam("height") Double height,
-			@QueryParam("weight") Double weight) {
+			HealthProfile hp) {
 
-		Person p = HibernateUtil.getPerson(p_id);
+		Person p = PersonDB.getPerson(p_id);
 
-		if (p != null && height != null && weight != null) {
+		if (p != null && hp != null && hp.getHeight() != null
+				&& hp.getWeight() != null) {
 
-			HealthProfile current_hp = new HealthProfile(p_id, weight, height,
-					new Date());
-			current_hp = HibernateUtil.createHealthProfile(current_hp);
+			hp.setPerson_id(p_id);
+			hp.setDate(new Date());
 
-			Set<HealthProfile> history = new HashSet<HealthProfile>();
-			history.add(current_hp);
+			HealthProfileDB.saveHealthProfile(hp);
 
-			p.setHealthProfileHistory(history);
+			// update the current healthprofile
+			p.setHeight(hp.getHeight());
+			p.setWeight(hp.getWeight());
+
+			p = PersonDB.updatePerson(p);
+
+			p.setHealthProfileHistory(HealthProfileDB
+					.getPersonHealthProfileHistory(p_id));
 		}
 
 		return p;
 	}
+
+	/**
+	 * PUT DELETE
+	 * 
+	 * /person/p_id/healthprofile/hp_id
+	 */
 
 	@PUT
-	@Path("/{p_id}/healthprofile")
+	@Path("/{p_id}/healthprofile/{hp_id}")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Person updateHealthProfileX(@PathParam("p_id") Long p_id,
-			@QueryParam("height") Double height,
-			@QueryParam("weight") Double weight) {
+	public Response updateHealthProfileX(@PathParam("p_id") Long p_id,
+			@PathParam("hp_id") Long hp_id, HealthProfile hp) {
 
-		Person p = HibernateUtil.getPerson(p_id);
-		if (p != null) {
+		Person person = PersonDB.getPerson(p_id);
+		if (person != null && hp.getWeight() != null && hp.getHeight() != null) {
 
-			HealthProfile hp = HibernateUtil.getCurrentHealthProfile(p_id);
+			HealthProfile isLastInHistory = HealthProfileDB.isCurrent(p_id,
+					hp_id);
 
-			if (hp != null && height != null & weight != null) {
-				// aggiorno anche la data perche dato che modifico il corrente
-				// healthprofile è giusto aggiornare anche la data
-				hp.setDate(new Date());
-				hp.setHeight(height);
-				hp.setWeight(weight);
+			if (isLastInHistory != null) {
+				// update anche valori correnti
+				person.setHeight(hp.getHeight());
+				person.setWeight(hp.getWeight());
 
-				hp = HibernateUtil.updateHealthProfile(hp);
+				person = PersonDB.savePerson(person);
 
-				Set<HealthProfile> history = new HashSet<HealthProfile>();
-				history.add(hp);
+				isLastInHistory.setHeight(hp.getHeight());
+				isLastInHistory.setWeight(hp.getWeight());
 
-				p.setHealthProfileHistory(history);
-			} else if (hp == null && height != null & weight != null) {
-				// if i cannot update the current because it doesn't exixts
-				// creates a new one -> the same thing as you do a post
-				HealthProfile current_hp = new HealthProfile(p_id, weight,
-						height, new Date());
-				current_hp = HibernateUtil.createHealthProfile(current_hp);
+				HealthProfileDB.updateHealthProfile(isLastInHistory);
 
-				Set<HealthProfile> history = new HashSet<HealthProfile>();
-				history.add(current_hp);
+			} else {
+				// modifico uno vecchio
+				HealthProfile old = HealthProfileDB.getSpecificHealthProfile(
+						p_id, hp_id);
+				if (old != null) {
 
-				p.setHealthProfileHistory(history);
+					old.setHeight(hp.getHeight());
+					old.setWeight(hp.getWeight());
+
+					HealthProfileDB.updateHealthProfile(old);
+
+				} else {
+					// sto cercando di modificare un healthprofile che non
+					// esiste (non dovrei mai entrare in questo caso !!!)
+					return Response.status(Response.Status.BAD_REQUEST).build();
+				}
 			}
+			person.setHealthProfileHistory(HealthProfileDB
+					.getPersonHealthProfileHistory(p_id));
+
+			return Response.status(Response.Status.OK).entity(person).build();
 		}
-		return p;
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
-	@GET
+	@DELETE
 	@Path("/{p_id}/healthprofile/{hp_id}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Person getHealthProfileX(@PathParam("p_id") Long p_id,
+	public Response deleteHealthProfileX(@PathParam("p_id") Long p_id,
 			@PathParam("hp_id") Long hp_id) {
 
-		Person p = HibernateUtil.getPerson(p_id);
-		if (p != null) {
+		Person person = PersonDB.getPerson(p_id);
+		if (person != null) {
 
-			HealthProfile hp = HibernateUtil.getSpecificHealthProfile(p_id,
+			HealthProfile hp = HealthProfileDB.getSpecificHealthProfile(p_id,
 					hp_id);
 
 			if (hp != null) {
-				Set<HealthProfile> history = new HashSet<HealthProfile>();
-				history.add(hp);
+				HealthProfileDB.deleteHealthProfile(hp_id);
 
-				p.setHealthProfileHistory(history);
+				person.setHealthProfileHistory(HealthProfileDB
+						.getPersonHealthProfileHistory(p_id));
 
-				return p;
+				return Response.status(Response.Status.OK).entity(person)
+						.build();
 			}
 		}
-		return null;
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
+	//
+	// @GET
+	// @Path("/{p_id}/healthprofile")
+	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	// public Person getHealthProfile(@PathParam("p_id") Long p_id,
+	// @QueryParam("before") String before,
+	// @QueryParam("after") String after) throws ParseException {
+	//
+	// Person p = PersonDB.getPerson(p_id);
+	// if (p != null) {
+	//
+	// SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+	//
+	// ArrayList<HealthProfile> history;
+	//
+	// if (before != null && after != null
+	// && before.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")
+	// && after.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
+	//
+	// history = HealthProfileDB.getPersonHealthProfileBefore(p_id,
+	// df.parse(before), df.parse(after));
+	//
+	// } else if (before != null
+	// && before.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
+	//
+	// history = HealthProfileDB.getPersonHealthProfileBefore(p_id,
+	// df.parse(before), null);
+	//
+	// } else if (after != null
+	// && after.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
+	//
+	// history = HealthProfileDB.getPersonHealthProfileBefore(p_id,
+	// null, df.parse(after));
+	//
+	// } else {
+	//
+	// history = HealthProfileDB.getPersonHealthProfileHistory(p_id);
+	// }
+	// p.setHealthProfileHistory(history);
+	// }
+	// return p;
+	// }
 
 }
