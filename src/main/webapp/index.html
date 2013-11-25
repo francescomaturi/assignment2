@@ -17,15 +17,17 @@
 
 <script type="text/javascript"> 
 	$(document).ready(function(){
-		$("div#searchModal-container").load("/../ajax/modal.html"); 
-		$("div#navbar-container").load("/../ajax/navbar.html"); 
-		$.get( "/../template/person-list-template.html", function( data ) {
+		var clientDirectory = "/../";
+		
+		$("div#searchModal-container").load(clientDirectory + "ajax/modal.html"); 
+		$("div#navbar-container").load(clientDirectory + "ajax/navbar.html"); 
+		$.get( clientDirectory + "template/person-list-template.html", function( data ) {
   		$( ".container" ).append(data);
 		});
-		$.get( "/../template/new-person-template.html", function( data ) {
+		$.get( clientDirectory + "template/new-person-template.html", function( data ) {
   		$( ".container" ).append(data);
 		});
-		$.get( "/../template/show-person-template.html", function( data ) {
+		$.get( clientDirectory + "template/show-person-template.html", function( data ) {
   		$( ".container" ).append(data);
 		});
 	});
@@ -59,7 +61,7 @@
     };
 
 		$.ajaxPrefilter(function(options, originalOptions, jqXR) {
-			options.url = "http://localhost:8080/RESTService/rest" + options.url;
+			options.url = "http://10.23.86.89:5900" + options.url;
 		});
 
 		Person = Backbone.Model.extend({
