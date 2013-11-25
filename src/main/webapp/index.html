@@ -6,39 +6,91 @@
 <link href="css/bootstrap.css" rel="stylesheet">
 <link href="css/bootstrap-responsive.css" rel="stylesheet">
 <link href="css/datepicker.css" rel="stylesheet">
+<link href="css/bootstrap-overrides.css" rel="stylesheet">
 <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
 <script type="text/javascript" src="js/json2.js"></script>
 <script type="text/javascript" src="js/underscore.js"></script>
 <script type="text/javascript" src="js/backbone.js"></script>
+<script type="text/javascript" src="js/backbone-relational.js"></script>
 <script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
+
+<script type="text/javascript"> 
+	$(document).ready(function(){
+		$("div#s").load("ajax/modal.html"); 
+		// $.get("modal.html", function( data ) {
+  // 		$( "div#s" ).html( data );
+		// });
+	});
+</script> 
+
 </head>
 <body>
 	<div class="container">
-		<h1>Person Manager</h1>
-		<hr />
+		<div id="s"></div>
+			
+		<div class="navbar navbar-inverse navbar-fixed-top">
+		  <div class="navbar-inner">
+		  	<div class="container">
+		    	<a class="brand" href="#">Person Manager</a>
+		    	<ul class="nav">
+		      	
+		      	<li><a class="navbar-item" href="#"><i class="icon-list icon-white"></i> People List</a></li>
+		      	<li><a class="navbar-item" href="#/newPerson"><i class="icon-plus icon-white"></i> New Person</a></li>
+		      	<li><a href="#searchModal" role="button" data-toggle="modal" class="navbar-item">
+		      		<i class="icon-search icon-white"></i> Search</a>
+		      	</li>
+
+		   		</ul>
+		   	</div>
+		  </div>
+		</div>
+		<br/>
 		<div class="page"></div>
 	</div>
 
 	<script type="text/template" id="person-list-template">
-		<a href="#/newPerson" class="btn btn-success">New Person</a>
+		<a href="#/newPerson" class="btn btn-success btn-large">
+			<i class="icon-plus icon-white"></i> New Person
+		</a>
+		
 		<hr/>
-		<table class="table striped">
+		<table class="table table-hover striped">
 			<thead>
 				<tr>
-					<th>Firstname</th>
-					<th>Lastname</th>
+				  <th>#</th>
+					<th>Fullname</th>
+					<th>Weight</th>
+					<th>Height</th>
+					<th>BMI</th>
 					<th>Birthdate</th>
+					<th></th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-				<% _.each(person, function(p){ %>
+				<% _.each(people, function(p, index){ %>
 					<tr>
-						<td><%= p.get('firstname')%></td>
-						<td><%= p.get('lastname')%></td>
+					  <td><%= index + 1 %></td>
+						
+						<td><a href="#/showPerson/<%= p.get('person_id') %>">
+							<%= p.get('firstname') + " " + p.get('lastname') %><a/>
+						</td>
+						
+						<td><%= p.get('weight')%></td>
+						<td><%= p.get('height')%></td>
+						<td><%= p.get('bmi')%></td>
 						<td><%= p.get('birthdate')%></td>
-						<td></td>
+
+						<td>
+							<a href="#/editPerson/<%= p.get('person_id') %>" class="btn btn-primary">
+								<i class="icon-edit icon-white"></i> Edit
+							</a>
+						</td>
+						<td><a href="#/deletePerson/<%= p.get('person_id') %>" class="btn btn-danger"
+								onclick="return confirm('Are you sure?')">
+							<i class="icon-trash icon-white"></i> Delete</a>
+						</td>
 					</tr>
 				<% })%>
 			</tbody>
@@ -47,23 +99,77 @@
 
 	<script type="text/template" id="new-person-template">
 
-		<a href="#" class="btn">Back to person list</a>
+		<a href="#" class="btn"><i class="icon-arrow-left"></i> Back to person list</a>
 		<br/><br/>
-		<form class="new-person-form">
-			<legend>Crete Person</legend>
-			<label>Firstname</label>
-			<input type="text" name="firstname"/>
-			<label>Lastname</label>
-			<input type="text" name="lastname"/>
-			<label>Birthdate</label>
-			<div class="input-append date" id="dp3" 
-					data-date="" 
-					data-date-format="dd-mm-yyyy">
-    		<input class="input" type="text" value="" name="birthdate">
-    		<span class="add-on"><i class="icon-th"></i></span>
+		<form class="new-person-form form-horizontal">
+			<legend><%= person ? 'Update' : 'Create' %> Person</legend>
+			
+			<div class="control-group">
+				<label class="control-label" for="inputFirstname">Firstname</label>
+				<div class="controls">
+					<input type="text" id="inputFirstname" name="firstname" placeholder="Firstname"
+						value="<%= person ? person.get('firstname') : '' %>"/>
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label" for="inputLastname">Lastname</label>
+				<div class="controls">
+					<input type="text" name="lastname" id="inputLastname" placeholder="Lastname"
+						value="<%= person ? person.get('lastname') : '' %>"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputBirthdate">Birthdate</label>
+				<div class="controls">
+					<div class="input-append date" id="dp3" 
+						data-date="<%= person ? person.get('birthdate') : '' %>" 
+						data-date-format="dd-mm-yyyy">
+	    			<input class="input" type="text" id="inputBirthdate" placeholder="Birthdate"
+	    				value="<%= person ? person.get('birthdate') : '' %>" name="birthdate">
+	    			<span class="add-on"><i class="icon-th"></i></span>
+	  			</div>
+	  		</div>
   		</div>
-			<hr/>
-			<button type="submit" class="btn btn-large btn-success">Create Person</button>
+
+  		<legend><%= person ? 'Update' : 'Create' %> Health Profile</legend>
+
+			<div class="control-group">
+				<label class="control-label" for="inputWeight">Weight</label>
+				<div class="controls">
+					<input type="text" name="weight" id="inputWeight" placeholder="Weight"
+						value="<%= person ? person.get('weight') : '' %>"/>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="inputHeight">Height</label>
+				<div class="controls">
+					<input type="text" name="height" id="inputHeight" placeholder="Height"
+						value="<%= person ? person.get('height') : '' %>"/>
+				</div>
+			</div>
+
+			<br/>
+			<% if (person) { %>
+				<input type="hidden" value = "<%= person ? person.get('person_id') : '' %>" name="id"/>
+			<% }; %>
+			
+			<div class="form-actions">
+				<% if (person) { %>
+					<button type="submit" class="btn btn-large btn-primary">
+						<i class="icon-edit icon-white"></i> Update Person
+					</button>
+					
+					<button type="button" class="btn btn-large btn-danger deletePerson" 
+						onclick="return confirm('Are you sure?')">
+						<i class="icon-trash icon-white"></i> Delete Person
+					</button>
+				<% } else { %> 
+					<button type="submit" class="btn btn-large btn-success">Create Person</button>
+				<% } %>
+			</div>
 		</form>
 
 		<script type="text/javascript">
@@ -74,6 +180,103 @@
 				});
 		  });
 		</script>
+	</script>
+
+	<script type="text/template" id="show-person-template">
+		<a href="#" class="btn"><i class="icon-arrow-left"></i> Back to person list</a>
+		<br/><br/>
+		<center><h2>
+			<%= person.get('firstname') + " " + person.get('lastname') + " (" + person.get('birthdate') + ")" %>
+		</h2></center>
+
+		<% currentHealthProfile = person.get('healthProfileHistory').reverse()[0] %>
+
+		<legend>Current Health Profile</legend>
+		<div class="row-fluid">
+		  <center>
+		  <div class="well" style="margin-bottom:10px; padding-bottom:28px">
+				<div class="span3">
+				  <p class="lead">Weight: <%= parseFloat(currentHealthProfile.weight).toPrecision(5) + " kg" %></p>
+				</div>
+				<div class="span3">
+					<p class="lead">Height: <%= parseFloat(currentHealthProfile.height).toPrecision(5) + " m" %></p>
+				</div>
+				<div class="span3">
+					<p class="lead">BMI: <%= parseFloat(currentHealthProfile.bmi).toPrecision(5) + " kg/m<sup>2</sup>" %></p>
+				</div>
+				<div class="span3">
+					<a href="#/newHealthProfile" class="btn btn-success">
+								<i class="icon-plus icon-white"></i> New Health Profile
+					</a>
+				</div>
+			</div>
+			</center>
+		</div>
+		
+		<br/>
+
+		<br/>
+
+		<legend>Health Profile History </legend>
+
+		<table class="table table-hover striped">
+			<thead>
+				<tr>
+				  <th>#</th>
+					<th>Weight (kg)</th>
+					<th>Height (m)</th>
+					<th>BMI (kg/m<sup>2</sup>)</th>
+					<th>Date</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+
+				<% _.each(person.get('healthProfileHistory'), function(healthProfile, index){ %>
+					<tr>
+						<td><%= index + 1 %></td>
+						
+						<td><%= parseFloat(healthProfile.weight).toPrecision(5) %></td>
+						
+						<td><%= parseFloat(healthProfile.height).toPrecision(5) %></td>
+
+						<td><%= parseFloat(healthProfile.bmi).toPrecision(5) %></td>
+
+						<td><%= healthProfile.date.substring(0,10) %></td>
+
+						<td>
+							<a href="#/editHealthProfile/<%= healthProfile.healthprofile_id %>" class="btn btn-primary">
+								<i class="icon-edit icon-white"></i> Edit
+							</a>
+						</td>
+						<td><a href="#/deletePerson/<%= healthProfile.healthprofile_id %>" class="btn btn-danger"
+								onclick="return confirm('Are you sure?')">
+							<i class="icon-trash icon-white"></i> Delete</a>
+						</td>
+
+					</tr>
+
+				<% }) %> 
+
+			</tbody>
+		</table>
+
+		<br/>
+
+		<div class="form-actions">
+
+			<a href="#/editPerson/<%= person.get('person_id') %>" class="btn btn-primary btn-large">
+				<i class="icon-edit icon-white"></i> Edit Person
+			</a>
+			
+			<a href="#/deletePerson/<%= person.get('person_id') %>" class="btn btn-danger btn-large"
+					onclick="return confirm('Are you sure?')">
+					<i class="icon-trash icon-white"></i> Delete Person
+			</a>
+		
+		</div>
+
 	</script>
 
 	<script type="text/javascript">
@@ -95,32 +298,36 @@
     };
 
 		$.ajaxPrefilter(function(options, originalOptions, jqXR) {
-
 			options.url = "http://localhost:8080/RESTService/rest" + options.url;
 		});
 
 		Person = Backbone.Model.extend({
-			urlRoot: '/person'
+			urlRoot: '/person',
+			initialize: function() {
+		    this.healthProfile = new HealthProfile;
+		    this.healthProfile.url = '/person/' + this.id + '/healthprofile';
+		  }
 		});
 
-		var Persons = Backbone.Collection.extend({
+		HealthProfile = Backbone.Model.extend({});
+
+		People = Backbone.Collection.extend({
 			model: Person,
 			url : '/person',
 			parse: function(response){
 		    return response.person;
 		  }    
-		})
+		});
 
 		var PersonList = Backbone.View.extend({
 			el : '.page',
 			render : function() {
 				that = this;
-				var persons = new Persons();
+				var persons = new People();
 				persons.fetch({
-					success : function(person) {
-
+					success : function(people) {
 						var template = _.template($('#person-list-template').html(), {
-							person : person.models
+							people : people.models
 						});
 						that.$el.html(template);
 					}
@@ -130,35 +337,92 @@
 
 		var personList = new PersonList();
 
-		var NewPerson = Backbone.View.extend({
+		var EditPerson = Backbone.View.extend({
 			el : '.page',
-			render : function(){
-				var template = _.template($('#new-person-template').html(), {});
-				this.$el.html(template);
+			render : function(options){
+				var that = this;
+				if(options.person_id){
+					var person = new Person({id : options.person_id});
+					person.fetch({
+						success: function(person){
+							var template = _.template($('#new-person-template').html(), {person : person});
+							that.$el.html(template);
+						}
+					});
+				} else{
+					var template = _.template($('#new-person-template').html(), {person : null});
+					this.$el.html(template);
+				}
 			},
 			events : {
-				'submit .new-person-form' : 'savePerson'
+				'submit .new-person-form' : 'savePerson',
+				'click .deletePerson' : 'deletePerson'
 			},
 			savePerson : function(ev){
 				personDetails = $(ev.currentTarget).serializeObject();
-				console.log(personDetails);
 				var person = new Person();
+				personDetails.person_id = personDetails.id;
+				console.log(personDetails);
 				person.save(personDetails, {
 					success : function(user){
 						router.navigate('', {trigger:true});
 					}
 				}) 
 				return false;
+			},
+
+			deletePerson : function(ev){
+				this.person.destroy({
+					success : function(){
+						router.navigate('', {trigger:true});
+					}
+				});
+				return false;
 			}
 		});
 
-		var newPerson = new NewPerson();
+		var editPerson = new EditPerson();
+
+		var ShowPerson = Backbone.View.extend({
+			el : '.page',
+			render : function(options){
+				var that = this;
+				var person = new Person({id : options.person_id});
+				person.healthProfile.fetch({
+					success: function(person){
+						var template = _.template($('#show-person-template').html(), {person : person});
+						that.$el.html(template);
+					}	
+				});
+			}
+		});
+
+		var showPerson = new ShowPerson();
+
+
+		var DeletePerson = Backbone.View.extend({
+			el : '.page',
+			render : function(options){
+				var person = new Person({id : options.person_id});
+				person.destroy({
+					success : function(){
+						router.navigate('', {trigger:true});
+					}
+				});
+				return false;
+			}
+		});
+
+		var deletePerson = new DeletePerson();
 
 		
 		var Router = Backbone.Router.extend({
 			routes : {
 				'' : "home",
-				'newPerson' : "newPerson"
+				'newPerson' : "editPerson",
+				'editPerson/:person_id' : "editPerson",
+				'deletePerson/:person_id' : "deletePerson",
+				'showPerson/:person_id' : "showPerson"
 			}
 		});
 
@@ -166,8 +430,14 @@
 		router.on('route:home', function() {
 			personList.render();
 		});
-		router.on('route:newPerson', function() {
-			newPerson.render();
+		router.on('route:editPerson', function(person_id) {
+			editPerson.render({person_id : person_id});
+		});
+		router.on('route:deletePerson', function(person_id) {
+			deletePerson.render({person_id : person_id});
+		});
+		router.on('route:showPerson', function(person_id) {
+			showPerson.render({person_id : person_id});
 		});
 
 		Backbone.history.start();
