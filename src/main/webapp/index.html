@@ -15,71 +15,78 @@
 <script type="text/javascript" src="js/backbone-relational.js"></script>
 <script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
 
-<script type="text/javascript"> 
-	$(document).ready(function(){
-		var clientDirectory = "/../";
-		
-		$("div#searchModal-container").load(clientDirectory + "ajax/modal.html"); 
-		$("div#navbar-container").load(clientDirectory + "ajax/navbar.html"); 
-		$.get( clientDirectory + "template/person-list-template.html", function( data ) {
-  		$( ".container" ).append(data);
-		});
-		$.get( clientDirectory + "template/new-person-template.html", function( data ) {
-  		$( ".container" ).append(data);
-		});
-		$.get( clientDirectory + "template/show-person-template.html", function( data ) {
-  		$( ".container" ).append(data);
-		});
-	});
-</script> 
+<script type="text/javascript">
+	$(document).ready(
+			function() {
+				var clientDirectory = "/../";
+
+				$("div#searchModal-container").load(
+						clientDirectory + "ajax/modal.html");
+				$("div#navbar-container").load(
+						clientDirectory + "ajax/navbar.html");
+				$.get(clientDirectory + "template/person-list-template.html",
+						function(data) {
+							$(".container").append(data);
+						});
+				$.get(clientDirectory + "template/new-person-template.html",
+						function(data) {
+							$(".container").append(data);
+						});
+				$.get(clientDirectory + "template/show-person-template.html",
+						function(data) {
+							$(".container").append(data);
+						});
+			});
+</script>
 
 </head>
 <body>
 	<div class="container">
 		<div id="searchModal-container"></div>
 		<div id="navbar-container"></div>
-		<br/>
+		<br />
 		<div class="page"></div>
 	</div>
 
 	<script type="text/javascript">
-
-		$.fn.serializeObject = function(){
-      var o = {};
-      var a = this.serializeArray();
-      $.each(a, function() {
-          if (o[this.name] !== undefined) {
-              if (!o[this.name].push) {
-                  o[this.name] = [o[this.name]];
-              }
-              o[this.name].push(this.value || '');
-          } else {
-              o[this.name] = this.value || '';
-          }
-      });
-      return o;
-    };
+		$.fn.serializeObject = function() {
+			var o = {};
+			var a = this.serializeArray();
+			$.each(a, function() {
+				if (o[this.name] !== undefined) {
+					if (!o[this.name].push) {
+						o[this.name] = [ o[this.name] ];
+					}
+					o[this.name].push(this.value || '');
+				} else {
+					o[this.name] = this.value || '';
+				}
+			});
+			return o;
+		};
 
 		$.ajaxPrefilter(function(options, originalOptions, jqXR) {
-			options.url = "http://10.23.86.89:5900" + options.url;
+			options.url = "http://localhost:8080/RESTService/rest"
+					+ options.url;
 		});
 
 		Person = Backbone.Model.extend({
-			urlRoot: '/person',
-			initialize: function() {
-		    this.healthProfile = new HealthProfile;
-		    this.healthProfile.url = '/person/' + this.id + '/healthprofile';
-		  }
+			urlRoot : '/person',
+			initialize : function() {
+				this.healthProfile = new HealthProfile;
+				this.healthProfile.url = '/person/' + this.id
+						+ '/healthprofile';
+			}
 		});
 
 		HealthProfile = Backbone.Model.extend({});
 
 		People = Backbone.Collection.extend({
-			model: Person,
+			model : Person,
 			url : '/person',
-			parse: function(response){
-		    return response.person;
-		  }    
+			parse : function(response) {
+				return response.person;
+			}
 		});
 
 		var PersonList = Backbone.View.extend({
@@ -89,7 +96,8 @@
 				var persons = new People();
 				persons.fetch({
 					success : function(people) {
-						var template = _.template($('#person-list-template').html(), {
+						var template = _.template($('#person-list-template')
+								.html(), {
 							people : people.models
 						});
 						that.$el.html(template);
@@ -102,18 +110,26 @@
 
 		var EditPerson = Backbone.View.extend({
 			el : '.page',
-			render : function(options){
+			render : function(options) {
 				var that = this;
-				if(options.person_id){
-					var person = new Person({id : options.person_id});
+				if (options.person_id) {
+					var person = new Person({
+						id : options.person_id
+					});
 					person.fetch({
-						success: function(person){
-							var template = _.template($('#new-person-template').html(), {person : person});
+						success : function(person) {
+							var template = _.template($('#new-person-template')
+									.html(), {
+								person : person
+							});
 							that.$el.html(template);
 						}
 					});
-				} else{
-					var template = _.template($('#new-person-template').html(), {person : null});
+				} else {
+					var template = _.template($('#new-person-template').html(),
+							{
+								person : null
+							});
 					this.$el.html(template);
 				}
 			},
@@ -121,23 +137,27 @@
 				'submit .new-person-form' : 'savePerson',
 				'click .deletePerson' : 'deletePerson'
 			},
-			savePerson : function(ev){
+			savePerson : function(ev) {
 				personDetails = $(ev.currentTarget).serializeObject();
 				var person = new Person();
 				personDetails.person_id = personDetails.id;
 				console.log(personDetails);
 				person.save(personDetails, {
-					success : function(user){
-						router.navigate('', {trigger:true});
+					success : function(user) {
+						router.navigate('', {
+							trigger : true
+						});
 					}
-				}) 
+				})
 				return false;
 			},
 
-			deletePerson : function(ev){
+			deletePerson : function(ev) {
 				this.person.destroy({
-					success : function(){
-						router.navigate('', {trigger:true});
+					success : function() {
+						router.navigate('', {
+							trigger : true
+						});
 					}
 				});
 				return false;
@@ -148,28 +168,36 @@
 
 		var ShowPerson = Backbone.View.extend({
 			el : '.page',
-			render : function(options){
+			render : function(options) {
 				var that = this;
-				var person = new Person({id : options.person_id});
+				var person = new Person({
+					id : options.person_id
+				});
 				person.healthProfile.fetch({
-					success: function(person){
-						var template = _.template($('#show-person-template').html(), {person : person});
+					success : function(person) {
+						var template = _.template($('#show-person-template')
+								.html(), {
+							person : person
+						});
 						that.$el.html(template);
-					}	
+					}
 				});
 			}
 		});
 
 		var showPerson = new ShowPerson();
 
-
 		var DeletePerson = Backbone.View.extend({
 			el : '.page',
-			render : function(options){
-				var person = new Person({id : options.person_id});
+			render : function(options) {
+				var person = new Person({
+					id : options.person_id
+				});
 				person.destroy({
-					success : function(){
-						router.navigate('', {trigger:true});
+					success : function() {
+						router.navigate('', {
+							trigger : true
+						});
 					}
 				});
 				return false;
@@ -178,7 +206,6 @@
 
 		var deletePerson = new DeletePerson();
 
-		
 		var Router = Backbone.Router.extend({
 			routes : {
 				'' : "home",
@@ -194,13 +221,19 @@
 			personList.render();
 		});
 		router.on('route:editPerson', function(person_id) {
-			editPerson.render({person_id : person_id});
+			editPerson.render({
+				person_id : person_id
+			});
 		});
 		router.on('route:deletePerson', function(person_id) {
-			deletePerson.render({person_id : person_id});
+			deletePerson.render({
+				person_id : person_id
+			});
 		});
 		router.on('route:showPerson', function(person_id) {
-			showPerson.render({person_id : person_id});
+			showPerson.render({
+				person_id : person_id
+			});
 		});
 
 		Backbone.history.start();

@@ -45,14 +45,9 @@ public class PersonService {
 				&& person.getHeight() != null) {
 			// se me l'hai passato lo annullo perche me lo genera il DB
 			person.setPerson_id(null);
+
+			person.setLastupdate(new Date());
 			person = PersonDB.savePerson(person);
-
-			HealthProfileDB.saveHealthProfile(new HealthProfile(person
-					.getPerson_id(), person.getWeight(), person.getHeight(),
-					new Date()));
-
-			person.setHealthProfileHistory(HealthProfileDB
-					.getPersonHealthProfileHistory(person.getPerson_id()));
 
 			return Response.status(Response.Status.OK).entity(person).build();
 
@@ -79,24 +74,30 @@ public class PersonService {
 	@Path("/{p_id}")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response updatePerson(@PathParam("p_id") Long p_id, Person person) {
+	public Response updatePerson(@PathParam("p_id") Long p_id,
+			Person updatedPerson) {
 
-		Person p = PersonDB.getPerson(p_id);
+		Person dbPerson = PersonDB.getPerson(p_id);
 
-		if (p != null && p.getPerson_id().equals(person.getPerson_id())
-				&& person.getBirthdate() != null && person.getWeight() != null
-				&& person.getHeight() != null) {
+		if (dbPerson != null
+				&& dbPerson.getPerson_id().equals(updatedPerson.getPerson_id())
+				&& updatedPerson.getBirthdate() != null
+				&& updatedPerson.getWeight() != null
+				&& updatedPerson.getHeight() != null) {
 
-			person = PersonDB.updatePerson(person);
+			// metto nella history il corrente perche ora lo aggiorno
+			HealthProfileDB.saveHealthProfile(new HealthProfile(dbPerson
+					.getPerson_id(), dbPerson.getWeight(),
+					dbPerson.getHeight(), dbPerson.getLastupdate()));
 
-			HealthProfileDB.saveHealthProfile(new HealthProfile(person
-					.getPerson_id(), person.getWeight(), person.getHeight(),
-					new Date()));
+			updatedPerson.setLastupdate(new Date());
+			updatedPerson = PersonDB.updatePerson(updatedPerson);
 
-			person.setHealthProfileHistory(HealthProfileDB
+			updatedPerson.setHealthProfileHistory(HealthProfileDB
 					.getPersonHealthProfileHistory(p_id));
 
-			return Response.status(Response.Status.OK).entity(person).build();
+			return Response.status(Response.Status.OK).entity(updatedPerson)
+					.build();
 
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).build();
@@ -150,23 +151,30 @@ public class PersonService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Person setHealthProfile(@PathParam("p_id") Long p_id,
-			HealthProfile hp) {
+			HealthProfile newHp) {
 
-		Person p = PersonDB.getPerson(p_id);
+		Person dbPerson = PersonDB.getPerson(p_id);
 
-		if (p != null && hp != null && hp.getHeight() != null
-				&& hp.getWeight() != null) {
+		if (dbPerson != null && newHp != null && newHp.getHeight() != null
+				&& newHp.getWeight() != null) {
 
-			hp.setPerson_id(p_id);
-			hp.setDate(new Date());
+			// metto nella history il corrente perche ora lo aggiorno
+			HealthProfileDB.saveHealthProfile(new HealthProfile(dbPerson
+					.getPerson_id(), dbPerson.getWeight(),
+					dbPerson.getHeight(), dbPerson.getLastupdate()));
 
-			HealthProfileDB.saveHealthProfile(hp);
+			// aggiorno la persona col nuovo hp
+			dbPerson.setLastupdate(new Date());
+			dbPerson.setHeight(newHp.getHeight());
+			dbPerson.setWeight(newHp.getWeight());
 
-			p.setHealthProfileHistory(HealthProfileDB
+			dbPerson = PersonDB.updatePerson(dbPerson);
+
+			dbPerson.setHealthProfileHistory(HealthProfileDB
 					.getPersonHealthProfileHistory(p_id));
 		}
 
-		return p;
+		return dbPerson;
 	}
 
 	/**
