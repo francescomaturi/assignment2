@@ -117,7 +117,7 @@ public class HealthProfileDB {
 			HealthProfile hp = (HealthProfile) session
 					.createCriteria(HealthProfile.class)
 					.add(Restrictions.eq("person_id", p_id))
-					.addOrder(Order.desc("date")).setMaxResults(1)
+					.addOrder(Order.asc("date")).setMaxResults(1)
 					.uniqueResult();
 
 			if (hp.getHealthprofile_id().equals(hp_id)) {
@@ -172,7 +172,7 @@ public class HealthProfileDB {
 			historyHealthProfiles = (ArrayList<HealthProfile>) session
 					.createCriteria(HealthProfile.class)
 					.add(Restrictions.eq("person_id", p_id))
-					.addOrder(Order.desc("date")).list();
+					.addOrder(Order.asc("date")).list();
 
 			transaction.commit();
 

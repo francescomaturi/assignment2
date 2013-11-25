@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -82,6 +83,11 @@ public class Person {
 
 	public void setWeight(Double weight) {
 		this.weight = weight;
+	}
+
+	@XmlElement(name = "bmi")
+	public Double getBmi() {
+		return height / (weight * weight);
 	}
 
 	public String getFirstname() {
