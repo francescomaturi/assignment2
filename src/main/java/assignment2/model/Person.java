@@ -87,7 +87,7 @@ public class Person {
 
 	@XmlElement(name = "bmi")
 	public Double getBmi() {
-		return height / (weight * weight);
+		return weight / (height * height);
 	}
 
 	public String getFirstname() {
