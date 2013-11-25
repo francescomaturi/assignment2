@@ -17,34 +17,16 @@
 
 <script type="text/javascript"> 
 	$(document).ready(function(){
-		$("div#s").load("ajax/modal.html"); 
-		// $.get("modal.html", function( data ) {
-  // 		$( "div#s" ).html( data );
-		// });
+		$("div#searchModal-container").load("/../ajax/modal.html"); 
+		$("div#navbar-container").load("/../ajax/navbar.html"); 
 	});
 </script> 
 
 </head>
 <body>
 	<div class="container">
-		<div id="s"></div>
-			
-		<div class="navbar navbar-inverse navbar-fixed-top">
-		  <div class="navbar-inner">
-		  	<div class="container">
-		    	<a class="brand" href="#">Person Manager</a>
-		    	<ul class="nav">
-		      	
-		      	<li><a class="navbar-item" href="#"><i class="icon-list icon-white"></i> People List</a></li>
-		      	<li><a class="navbar-item" href="#/newPerson"><i class="icon-plus icon-white"></i> New Person</a></li>
-		      	<li><a href="#searchModal" role="button" data-toggle="modal" class="navbar-item">
-		      		<i class="icon-search icon-white"></i> Search</a>
-		      	</li>
-
-		   		</ul>
-		   	</div>
-		  </div>
-		</div>
+		<div id="searchModal-container"></div>
+		<div id="navbar-container"></div>
 		<br/>
 		<div class="page"></div>
 	</div>
@@ -77,9 +59,9 @@
 							<%= p.get('firstname') + " " + p.get('lastname') %><a/>
 						</td>
 						
-						<td><%= p.get('weight')%></td>
-						<td><%= p.get('height')%></td>
-						<td><%= p.get('bmi')%></td>
+						<td><%= parseFloat(p.get('weight')).toPrecision(5) %></td>
+						<td><%= parseFloat(p.get('height')).toPrecision(5) %></td>
+						<td><%= parseFloat(p.get('bmi')).toPrecision(5) %></td>
 						<td><%= p.get('birthdate')%></td>
 
 						<td>
@@ -189,20 +171,18 @@
 			<%= person.get('firstname') + " " + person.get('lastname') + " (" + person.get('birthdate') + ")" %>
 		</h2></center>
 
-		<% currentHealthProfile = person.get('healthProfileHistory').reverse()[0] %>
-
 		<legend>Current Health Profile</legend>
 		<div class="row-fluid">
 		  <center>
 		  <div class="well" style="margin-bottom:10px; padding-bottom:28px">
 				<div class="span3">
-				  <p class="lead">Weight: <%= parseFloat(currentHealthProfile.weight).toPrecision(5) + " kg" %></p>
+				  <p class="lead">Weight: <%= parseFloat(person.get('weight')).toPrecision(5) + " kg" %></p>
 				</div>
 				<div class="span3">
-					<p class="lead">Height: <%= parseFloat(currentHealthProfile.height).toPrecision(5) + " m" %></p>
+					<p class="lead">Height: <%= parseFloat(person.get('height')).toPrecision(5) + " m" %></p>
 				</div>
 				<div class="span3">
-					<p class="lead">BMI: <%= parseFloat(currentHealthProfile.bmi).toPrecision(5) + " kg/m<sup>2</sup>" %></p>
+					<p class="lead">BMI: <%= parseFloat(person.get('bmi')).toPrecision(5) + " kg/m<sup>2</sup>" %></p>
 				</div>
 				<div class="span3">
 					<a href="#/newHealthProfile" class="btn btn-success">
