@@ -1,9 +1,7 @@
 package assignment2.hibernate;
 
 import java.util.ArrayList;
-import java.util.Date;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -13,6 +11,34 @@ import org.hibernate.criterion.Restrictions;
 import assignment2.model.HealthProfile;
 
 public class HealthProfileDB {
+
+	public static Double getProperty(String property, Long p_id) {
+		Session session = Hibernate.getSessionFactory().openSession();
+		Transaction transaction = null;
+		HealthProfile hp = null;
+		try {
+			transaction = session.beginTransaction();
+
+			hp = (HealthProfile) session.createCriteria(HealthProfile.class)
+					.add(Restrictions.eq("person_id", p_id))
+					.addOrder(Order.desc("date")).setMaxResults(1)
+					.uniqueResult();
+
+			transaction.commit();
+		} catch (HibernateException e) {
+			// rollback transaction
+			if (transaction != null) {
+				transaction.rollback();
+			}
+		} finally {
+			session.close();
+		}
+
+		if (property.equalsIgnoreCase("weight"))
+			return hp.getWeight();
+		else
+			return hp.getHeight();
+	}
 
 	public static HealthProfile saveHealthProfile(HealthProfile hp) {
 		Session session = Hibernate.getSessionFactory().openSession();
@@ -117,7 +143,7 @@ public class HealthProfileDB {
 			HealthProfile hp = (HealthProfile) session
 					.createCriteria(HealthProfile.class)
 					.add(Restrictions.eq("person_id", p_id))
-					.addOrder(Order.asc("date")).setMaxResults(1)
+					.addOrder(Order.desc("date")).setMaxResults(1)
 					.uniqueResult();
 
 			if (hp.getHealthprofile_id().equals(hp_id)) {
@@ -172,7 +198,7 @@ public class HealthProfileDB {
 			historyHealthProfiles = (ArrayList<HealthProfile>) session
 					.createCriteria(HealthProfile.class)
 					.add(Restrictions.eq("person_id", p_id))
-					.addOrder(Order.asc("date")).list();
+					.addOrder(Order.desc("date")).list();
 
 			transaction.commit();
 
