@@ -159,8 +159,86 @@
 		<center><h2>
 			<%= person.get('firstname') + " " + person.get('lastname') + " (" + person.get('birthdate') + ")" %>
 		</h2></center>
+
+		<% currentHealthProfile = person.get('healthProfileHistory').reverse()[0] %>
+
+		<legend>Current Health Profile</legend>
+		<div class="row-fluid">
+		  <center>
+		  <div class="well" style="margin-bottom:10px; padding-bottom:28px">
+				<div class="span3">
+				  <p class="lead">Weight: <%= parseFloat(currentHealthProfile.weight).toPrecision(5) + " kg" %></p>
+				</div>
+				<div class="span3">
+					<p class="lead">Weight: <%= parseFloat(currentHealthProfile.height).toPrecision(5) + " m" %></p>
+				</div>
+				<div class="span3">
+					<p class="lead">BMI: <%= parseFloat(currentHealthProfile.bmi).toPrecision(5) + " kg/m<sup>2</sup>" %></p>
+				</div>
+				<div class="span3">
+					<a href="#/editHealthProfile/<%= currentHealthProfile.healthprofile_id %>" class="btn btn-primary">
+								<i class="icon-edit icon-white"></i> Edit Health Profile
+					</a>
+				</div>
+			</div>
+			</center>
+		</div>
 		
-		<hr/>
+		<br/>
+
+		<a href="#/newHealthProfile" class="btn btn-success">
+			<i class="icon-plus icon-white"></i> New Health Profile
+		</a>
+
+		<br/><br/><br/>
+
+		<legend>Health Profile History </legend>
+
+		<table class="table table-hover striped">
+			<thead>
+				<tr>
+				  <th>#</th>
+					<th>Weight (kg)</th>
+					<th>Height (m)</th>
+					<th>BMI (kg/m<sup>2</sup>)</th>
+					<th>Date</th>
+				</tr>
+			</thead>
+			<tbody>
+
+				<% _.each(person.get('healthProfileHistory'), function(healthProfile, index){ %>
+					<tr>
+						<td><%= index + 1 %></td>
+						
+						<td><%= parseFloat(healthProfile.weight).toPrecision(5) %></td>
+						
+						<td><%= parseFloat(healthProfile.height).toPrecision(5) %></td>
+
+						<td><%= parseFloat(healthProfile.bmi).toPrecision(5) %></td>
+
+						<td><%= healthProfile.date.substring(0,10) %></td>
+
+					</tr>
+
+				<% }) %> 
+
+			</tbody>
+		</table>
+
+		<br/>
+
+		<div class="form-actions">
+
+			<a href="#/editPerson/<%= person.get('person_id') %>" class="btn btn-primary btn-large">
+				<i class="icon-edit icon-white"></i> Edit Person
+			</a>
+			
+			<a href="#/deletePerson/<%= person.get('person_id') %>" class="btn btn-danger btn-large"
+					onclick="return confirm('Sei sicuro?')">
+					<i class="icon-trash icon-white"></i> Delete Person
+			</a>
+		
+		</div>
 
 	</script>
 
@@ -183,31 +261,18 @@
     };
 
 		$.ajaxPrefilter(function(options, originalOptions, jqXR) {
-			options.url = "http://192.168.1.3:5900" + options.url;
+			options.url = "http://10.23.86.89:5900" + options.url;
 		});
 
-		Person = Backbone.RelationalModel.extend({
-			relations: [{
-        type: 'HasMany',   // Type of relationship
-        key: 'healthProfileHistory',  // How we reference the sub-models in collection
-        keyDestination: 'healthProfileHistory',
-        relatedModel: 'HealthProfile',    // The sub-model type
-        collectionType: 'HealthProfileCollection',  // The sub-model collection        
-        reverseRelation: {
-					key: 'person'
-				}
-    	}],
-			urlRoot: '/person'
+		Person = Backbone.Model.extend({
+			urlRoot: '/person',
+			initialize: function() {
+		    this.healthProfile = new HealthProfile;
+		    this.healthProfile.url = '/person/' + this.id + '/healthprofile';
+		  }
 		});
 
-		HealthProfile = Backbone.RelationalModel.extend({
-			urlRoot: '/healthprofile'
-		});
-
-		HealthProfileCollection = Backbone.Collection.extend({
-			model: HealthProfile
-		});
-
+		HealthProfile = Backbone.Model.extend({});
 
 		People = Backbone.Collection.extend({
 			model: Person,
@@ -276,16 +341,12 @@
 			render : function(options){
 				var that = this;
 				var person = new Person({id : options.person_id});
-				person.fetch();
-				person.get('healthProfileHistory').fetch();
-				//person.fetchRelated('healthProfileHistory');
-				console.log(person.get('healthProfileHistory'));
-				// person.fetch({
-				// 	success: function(person){
-				// 		var template = _.template($('#show-person-template').html(), {person : person});
-				// 		that.$el.html(template);
-				// 	}	
-				// });
+				person.healthProfile.fetch({
+					success: function(person){
+						var template = _.template($('#show-person-template').html(), {person : person});
+						that.$el.html(template);
+					}	
+				});
 			}
 		});
 

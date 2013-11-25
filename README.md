@@ -44,6 +44,8 @@ Returns the specified person with the history of his healthprofile.
 
 -> to finish beacause you can specify before and after
 
+-> WARNING: IF I CALL THAT URL IT RETURNS RANDOM VALUES
+
 **POST /person/{p_id}/healthprofile?height=YOUR_HEIGHT&weight=YOUR_WEIGHT**
 
 Creates a new healthprofile for the given person with the passed parameters. Returns the person with his new current healthprofile.
