@@ -86,7 +86,9 @@ public class RestService {
 
 		Person dbPerson = PeopleDB.getPerson(p_id);
 
-		if (dbPerson != null && updatedPerson.getBirthdate() != null
+		if (dbPerson != null && updatedPerson.getFirstname() != null
+				&& updatedPerson.getLastname() != null
+				&& updatedPerson.getBirthdate() != null
 				&& updatedPerson.getWeight() != null
 				&& updatedPerson.getHeight() != null) {
 
@@ -95,14 +97,19 @@ public class RestService {
 					.getPerson_id(), dbPerson.getWeight(),
 					dbPerson.getHeight(), dbPerson.getLastupdate()));
 
-			updatedPerson.setLastupdate(new Date());
-			updatedPerson = PeopleDB.updatePerson(updatedPerson);
+			dbPerson.setFirstname(updatedPerson.getFirstname());
+			dbPerson.setLastname(updatedPerson.getLastname());
+			dbPerson.setBirthdate(updatedPerson.getBirthdate());
+			dbPerson.setHeight(updatedPerson.getHeight());
+			dbPerson.setWeight(updatedPerson.getWeight());
+			dbPerson.setLastupdate(new Date());
 
-			updatedPerson.setHealthProfileIds(HealthProfileDB
+			dbPerson = PeopleDB.updatePerson(dbPerson);
+
+			dbPerson.setHealthProfileIds(HealthProfileDB
 					.getHealthProfileIds(p_id));
 
-			return Response.status(Response.Status.OK).entity(updatedPerson)
-					.build();
+			return Response.status(Response.Status.OK).entity(dbPerson).build();
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
