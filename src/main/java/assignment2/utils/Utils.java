@@ -40,7 +40,8 @@ public class Utils {
 		return list;
 	}
 
-	public static ArrayList<Person> clear(ArrayList<Person>... mArrayLists) {
+	public static ArrayList<Person> createUniqueList(
+			ArrayList<Person>... mArrayLists) {
 
 		Set<Person> set = new HashSet<Person>();
 
