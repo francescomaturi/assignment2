@@ -1,4 +1,4 @@
-package assignment2.service;
+package assignment2.server;
 
 import java.io.IOException;
 import java.net.InetAddress;

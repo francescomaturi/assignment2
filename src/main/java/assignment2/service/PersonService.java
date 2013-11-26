@@ -12,6 +12,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -242,14 +243,18 @@ public class PersonService {
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
-	//
-	// @GET
-	// @Path("/{p_id}/healthprofile")
-	// @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	// public Person getHealthProfile(@PathParam("p_id") Long p_id,
-	// @QueryParam("before") String before,
-	// @QueryParam("after") String after) throws ParseException {
-	//
+
+	@GET
+	@Path("/search")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Person getHealthProfile(@PathParam("p_id") Long p_id,
+			@QueryParam("before") String before,
+			@QueryParam("after") String after) {
+		
+		
+		
+		return null;
+	}
 	// Person p = PersonDB.getPerson(p_id);
 	// if (p != null) {
 	//
