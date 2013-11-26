@@ -3,9 +3,7 @@ var EditPerson = Backbone.View.extend({
 	render : function(options) {
 		var that = this;
 		if (options.person_id) {
-			that.person = new Person({
-				id : options.person_id
-			});
+			that.person = new Person({ id : options.person_id });
 			that.person.fetch({
 				success : function(person) {
 					var template = _.template($('#new-person-template').html(),{person : person });
@@ -24,12 +22,12 @@ var EditPerson = Backbone.View.extend({
 	savePerson : function(ev) {
 		personDetails = $(ev.currentTarget).serializeObject();
 		var person = new Person();
-		personDetails.person_id = personDetails.id;
 		person.save(personDetails, {
 			success : function(user) {
-				router.navigate('showPerson/'+ user.id, {trigger : true});
+				var id = user.get('person_id');
+				router.navigate('#/showPerson/'+ id, {trigger : true});
 			}
-		})
+		});
 		return false;
 	},
 

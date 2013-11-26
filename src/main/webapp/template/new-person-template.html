@@ -54,7 +54,7 @@
 
 			<br/>
 			<% if (person) { %>
-				<input type="hidden" value = "<%= person ? person.get('person_id') : '' %>" name="id"/>
+				<input type="hidden" value = "<%= person.get('person_id') %>" name="id"/>
 			<% }; %>
 			
 			<div class="form-actions">

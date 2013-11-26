@@ -86,7 +86,10 @@
     HealthProfileHistory = Backbone.Collection.extend({
       model: HealthProfile,
       parse : function(response) {
-          return response.healthProfile;
+    	    if(response)
+    	      return response.healthProfile;
+    	    else
+    	    	return null;
         }
     });
     
