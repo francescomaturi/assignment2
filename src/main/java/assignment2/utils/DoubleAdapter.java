@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class DoubleAdapter extends XmlAdapter<String, Double> {
 
-	private DecimalFormat decimalFormat = new DecimalFormat("##.###");
+	private DecimalFormat decimalFormat = new DecimalFormat("###.###");
 
 	@Override
 	public String marshal(Double arg0) throws Exception {
