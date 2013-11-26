@@ -12,17 +12,18 @@ import assignment2.model.HealthProfile;
 
 public class HealthProfileDB {
 
-	public static Double getProperty(String property, Long p_id) {
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Long> getHealthProfileHistoryIds(Long p_id) {
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
-		HealthProfile hp = null;
+		ArrayList<Long> ids = null;
 		try {
 			transaction = session.beginTransaction();
 
-			hp = (HealthProfile) session.createCriteria(HealthProfile.class)
-					.add(Restrictions.eq("person_id", p_id))
-					.addOrder(Order.desc("date")).setMaxResults(1)
-					.uniqueResult();
+			ids = (ArrayList<Long>) session
+					.createQuery(
+							"select healthprofile_id from HealthProfile where person_id = :p_id")
+					.setParameter("p_id", p_id).list();
 
 			transaction.commit();
 		} catch (HibernateException e) {
@@ -33,11 +34,7 @@ public class HealthProfileDB {
 		} finally {
 			session.close();
 		}
-
-		if (property.equalsIgnoreCase("weight"))
-			return hp.getWeight();
-		else
-			return hp.getHeight();
+		return ids;
 	}
 
 	public static HealthProfile saveHealthProfile(HealthProfile hp) {

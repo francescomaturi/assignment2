@@ -67,7 +67,9 @@ public class PersonService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Person getPerson(@PathParam("p_id") Long p_id) {
 
-		return PersonDB.getPerson(p_id);
+		Person p = PersonDB.getPerson(p_id);
+		p.setHistory(HealthProfileDB.getHealthProfileHistoryIds(p_id));
+		return p;
 	}
 
 	@PUT
@@ -93,12 +95,12 @@ public class PersonService {
 			updatedPerson.setLastupdate(new Date());
 			updatedPerson = PersonDB.updatePerson(updatedPerson);
 
-			updatedPerson.setHealthProfileHistory(HealthProfileDB
-					.getPersonHealthProfileHistory(p_id));
+			// lo commento solo per consistenza con le altre risposte
+			// updatedPerson.setHealthProfileHistory(HealthProfileDB
+			// .getPersonHealthProfileHistory(p_id));
 
 			return Response.status(Response.Status.OK).entity(updatedPerson)
 					.build();
-
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
@@ -178,10 +180,18 @@ public class PersonService {
 	}
 
 	/**
-	 * PUT DELETE
+	 * GET PUT DELETE
 	 * 
 	 * /person/p_id/healthprofile/hp_id
 	 */
+
+	@GET
+	@Path("/{p_id}/healthprofile/{hp_id}")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public HealthProfile getHealthProfile(@PathParam("p_id") Long p_id,
+			@PathParam("hp_id") Long hp_id) {
+		return HealthProfileDB.getSpecificHealthProfile(p_id, hp_id);
+	}
 
 	@PUT
 	@Path("/{p_id}/healthprofile/{hp_id}")

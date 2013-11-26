@@ -9,6 +9,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import assignment2.adapter.DateAdapter;
@@ -16,6 +17,7 @@ import assignment2.adapter.DateAdapter;
 @XmlRootElement
 @Entity
 @Table
+@XmlType(propOrder = { "healthprofile_id", "height", "weight", "bmi", "date" })
 public class HealthProfile {
 
 	@Id
@@ -83,7 +85,7 @@ public class HealthProfile {
 	}
 
 	@XmlElement(name = "bmi")
-	public Double getBMI() {
+	public Double getBmi() {
 		return weight / (height * height);
 	}
 

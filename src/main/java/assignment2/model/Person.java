@@ -10,13 +10,18 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import assignment2.adapter.BirthDateAdapter;
+import assignment2.adapter.DateAdapter;
 
 @XmlRootElement
 @Entity
 @Table
+@XmlType(propOrder = { "person_id", "firstname", "lastname", "birthdate",
+		"height", "weight", "bmi", "lastupdate", "healthProfileHistory",
+		"history" })
 public class Person {
 
 	@Id
@@ -34,6 +39,9 @@ public class Person {
 
 	@Transient
 	private ArrayList<HealthProfile> healthProfileHistory;
+
+	@Transient
+	private ArrayList<Long> history;
 
 	public Person() {
 		super();
@@ -87,6 +95,7 @@ public class Person {
 		this.weight = weight;
 	}
 
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getLastupdate() {
 		return lastupdate;
 	}
@@ -132,5 +141,13 @@ public class Person {
 	public void setHealthProfileHistory(
 			ArrayList<HealthProfile> healthProfileHistory) {
 		this.healthProfileHistory = healthProfileHistory;
+	}
+
+	public ArrayList<Long> getHistory() {
+		return history;
+	}
+
+	public void setHistory(ArrayList<Long> history) {
+		this.history = history;
 	}
 }
