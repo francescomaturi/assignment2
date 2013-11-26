@@ -70,7 +70,6 @@ Returns all the people that have the birthday in the specified range.
 
 Returns all the people that are in the specified range of height or weight.
 
-
-** GET  /person/search?q=TEXT_TO_SEARCH**
+**GET  /person/search?q=TEXT_TO_SEARCH**
 
 Returns the people that have firstname or lastname matching the TEXT_TO_SEARCH 
