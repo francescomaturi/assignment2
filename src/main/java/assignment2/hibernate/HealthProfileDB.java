@@ -12,31 +12,6 @@ import assignment2.model.HealthProfile;
 
 public class HealthProfileDB {
 
-	@SuppressWarnings("unchecked")
-	public static ArrayList<Long> getHealthProfileIds(Long p_id) {
-		Session session = Hibernate.getSessionFactory().openSession();
-		Transaction transaction = null;
-		ArrayList<Long> ids = null;
-		try {
-			transaction = session.beginTransaction();
-
-			ids = (ArrayList<Long>) session
-					.createQuery(
-							"select healthprofile_id from HealthProfile where person_id = :p_id")
-					.setParameter("p_id", p_id).list();
-
-			transaction.commit();
-		} catch (HibernateException e) {
-			// rollback transaction
-			if (transaction != null) {
-				transaction.rollback();
-			}
-		} finally {
-			session.close();
-		}
-		return ids;
-	}
-
 	public static HealthProfile saveHealthProfile(HealthProfile hp) {
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
@@ -130,36 +105,6 @@ public class HealthProfileDB {
 		return hp;
 	}
 
-	public static HealthProfile isCurrent(Long p_id, Long hp_id) {
-		Session session = Hibernate.getSessionFactory().openSession();
-		Transaction transaction = null;
-
-		try {
-			transaction = session.beginTransaction();
-
-			HealthProfile hp = (HealthProfile) session
-					.createCriteria(HealthProfile.class)
-					.add(Restrictions.eq("person_id", p_id))
-					.addOrder(Order.desc("date")).setMaxResults(1)
-					.uniqueResult();
-
-			if (hp.getHealthprofile_id().equals(hp_id)) {
-				return hp;
-			}
-
-			transaction.commit();
-		} catch (HibernateException e) {
-			// rollback transaction
-			if (transaction != null) {
-				transaction.rollback();
-			}
-		} finally {
-			session.close();
-		}
-
-		return null;
-	}
-
 	public static void deletePersonHealthProfileHistory(
 			ArrayList<HealthProfile> history) {
 		Session session = Hibernate.getSessionFactory().openSession();
@@ -181,6 +126,31 @@ public class HealthProfileDB {
 		} finally {
 			session.close();
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Long> getHealthProfileIds(Long p_id) {
+		Session session = Hibernate.getSessionFactory().openSession();
+		Transaction transaction = null;
+		ArrayList<Long> ids = null;
+		try {
+			transaction = session.beginTransaction();
+
+			ids = (ArrayList<Long>) session
+					.createQuery(
+							"select healthprofile_id from HealthProfile where person_id = :p_id")
+					.setParameter("p_id", p_id).list();
+
+			transaction.commit();
+		} catch (HibernateException e) {
+			// rollback transaction
+			if (transaction != null) {
+				transaction.rollback();
+			}
+		} finally {
+			session.close();
+		}
+		return ids;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -210,47 +180,4 @@ public class HealthProfileDB {
 
 		return historyHealthProfiles;
 	}
-
-	// @SuppressWarnings("unchecked")
-	// public static ArrayList<HealthProfile> getPersonHealthProfileBefore(
-	// Long p_id, Date before, Date after) {
-	// Session session = Hibernate.getSessionFactory().openSession();
-	// Transaction transaction = null;
-	// ArrayList<HealthProfile> historyHealthProfiles = null;
-	//
-	// try {
-	// transaction = session.beginTransaction();
-	//
-	// Criteria criteria = session.createCriteria(HealthProfile.class)
-	// .add(Restrictions.eq("person_id", p_id))
-	// .addOrder(Order.desc("date"));
-	//
-	// if (before != null && after != null) {
-	// // between two dates
-	// criteria.add(Restrictions.between("date", after, before));
-	//
-	// } else if (before != null) {
-	// // less than or equal the given date
-	// criteria.add(Restrictions.le("date", before));
-	//
-	// } else {
-	// // grater than or equal the given date
-	// criteria.add(Restrictions.ge("date", after));
-	// }
-	//
-	// historyHealthProfiles = (ArrayList<HealthProfile>) criteria.list();
-	//
-	// transaction.commit();
-	//
-	// } catch (HibernateException e) {
-	// // rollback transaction
-	// if (transaction != null) {
-	// transaction.rollback();
-	// }
-	// } finally {
-	// session.close();
-	// }
-	//
-	// return historyHealthProfiles;
-	// }
 }

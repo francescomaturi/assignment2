@@ -13,8 +13,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import assignment2.adapter.BirthDateAdapter;
-import assignment2.adapter.DateAdapter;
+import assignment2.utils.BirthDateAdapter;
+import assignment2.utils.DateAdapter;
 
 @XmlRootElement
 @Entity

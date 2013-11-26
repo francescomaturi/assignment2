@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import assignment2.adapter.DateAdapter;
+import assignment2.utils.DateAdapter;
 
 @XmlRootElement
 @Entity

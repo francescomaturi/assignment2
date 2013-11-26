@@ -1,5 +1,6 @@
 package assignment2.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,9 +22,10 @@ import assignment2.hibernate.HealthProfileDB;
 import assignment2.hibernate.PersonDB;
 import assignment2.model.HealthProfile;
 import assignment2.model.Person;
+import assignment2.utils.Utils;
 
 @Path("/person")
-public class PersonService {
+public class RestService {
 
 	/**
 	 * GET POST
@@ -193,6 +195,7 @@ public class PersonService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public HealthProfile getHealthProfile(@PathParam("p_id") Long p_id,
 			@PathParam("hp_id") Long hp_id) {
+
 		return HealthProfileDB.getSpecificHealthProfile(p_id, hp_id);
 	}
 
@@ -254,51 +257,80 @@ public class PersonService {
 	@GET
 	@Path("/birthdate")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public ArrayList<Person> getHealthProfile(@PathParam("p_id") Long p_id,
-			@QueryParam("before") String before,
-			@QueryParam("after") String after) {
+	public ArrayList<Person> getPeopleByBirthday(@PathParam("p_id") Long p_id,
+			@QueryParam("before") String before_qp,
+			@QueryParam("after") String after_qp) {
+
+		if (after_qp != null && before_qp != null) {
+
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+			Date before, after;
+
+			try {
+				before = format.parse(before_qp);
+
+			} catch (ParseException e) {
+				before = null;
+			}
+
+			try {
+				after = format.parse(after_qp);
+
+			} catch (ParseException e) {
+				after = null;
+			}
+			return PersonDB.searchBirthdate(after, before);
+		}
+		return null;
+	}
+
+	/**
+	 * GET
+	 * 
+	 * /person/birthdate?after=dd-mm-yyyy&before=dd-mm-yyyy
+	 */
+
+	@GET
+	@Path("/measure")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public ArrayList<Person> getPeopleByBirthdate(
+			@QueryParam("before") String before_qp,
+			@QueryParam("after") String after_qp) {
+
+		if (after_qp != null && before_qp != null) {
+
+			return PersonDB.searchBirthdate(Utils.parse(after_qp),
+					Utils.parse(before_qp));
+		}
+		return null;
+	}
+
+	/**
+	 * GET
+	 * 
+	 * /person/profile?measure={height|weight}&min=MIN&max=MAX
+	 */
+
+	@GET
+	@Path("/profile")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public ArrayList<Person> getPeopleByMeasure(
+			@QueryParam("measure") String measure,
+			@QueryParam("max") Double max, @QueryParam("min") Double min) {
+
 		ArrayList<Person> list = null;
 
-		if (after != null && before != null) {
+		if (measure != null) {
 
-			SimpleDateFormat format = new SimpleDateFormat("");
+			if (measure.equalsIgnoreCase("height")) {
+				list = PersonDB.getPersonByHeight(min, max);
 
+			} else if (measure.equalsIgnoreCase("weight")) {
+				list = PersonDB.getPersonByWeight(min, max);
+			}
 		}
+
 		return list;
 	}
-	// Person p = PersonDB.getPerson(p_id);
-	// if (p != null) {
-	//
-	// SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
-	//
-	// ArrayList<HealthProfile> history;
-	//
-	// if (before != null && after != null
-	// && before.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")
-	// && after.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
-	//
-	// history = HealthProfileDB.getPersonHealthProfileBefore(p_id,
-	// df.parse(before), df.parse(after));
-	//
-	// } else if (before != null
-	// && before.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
-	//
-	// history = HealthProfileDB.getPersonHealthProfileBefore(p_id,
-	// df.parse(before), null);
-	//
-	// } else if (after != null
-	// && after.matches("[0-9]{2}-[0-9]{2}-[0-9]{4}")) {
-	//
-	// history = HealthProfileDB.getPersonHealthProfileBefore(p_id,
-	// null, df.parse(after));
-	//
-	// } else {
-	//
-	// history = HealthProfileDB.getPersonHealthProfileHistory(p_id);
-	// }
-	// p.setHealthProfileHistory(history);
-	// }
-	// return p;
-	// }
 
 }

@@ -1,4 +1,4 @@
-package assignment2.adapter;
+package assignment2.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
