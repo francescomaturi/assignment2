@@ -3,10 +3,10 @@ var EditPerson = Backbone.View.extend({
 	render : function(options) {
 		var that = this;
 		if (options.person_id) {
-			var person = new Person({
+			that.person = new Person({
 				id : options.person_id
 			});
-			person.fetch({
+			that.person.fetch({
 				success : function(person) {
 					var template = _.template($('#new-person-template').html(),{person : person });
 					that.$el.html(template);

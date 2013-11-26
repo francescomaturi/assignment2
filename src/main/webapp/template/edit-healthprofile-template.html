@@ -1,29 +1,44 @@
 <script type="text/template" id="edit-healthprofile-template">
 
-<a href="#" class="btn"><i class="icon-arrow-left"></i> Back to person list</a>
+<a href="#/showPerson/<%= person_id %>" class="btn"><i class="icon-arrow-left"></i> Back to person list</a>
 <br/><br/>
-<form class="new-person-form form-horizontal">
-  <legend><%= healthprofile ? 'Update' : 'Create' %> HealthProfile</legend>
+<form class="edit-healthprofile-form form-horizontal">
+  <legend><%= healthProfile ? 'Update' : 'Create' %> HealthProfile</legend>
   
   <div class="control-group">
     <label class="control-label" for="inputWeight">Weight</label>
     <div class="controls">
-      <input type="text" id="inputWeight" name="weight" placeholder="Weight" />
+      <input type="text" id="inputWeight" name="weight" placeholder="Weight" 
+        value="<%= healthProfile ? healthProfile.get('weight') : '' %>" />
     </div>
   </div>
   
   <div class="control-group">
     <label class="control-label" for="inputHeight">Height</label>
     <div class="controls">
-      <input type="text" id="inputHeight" name="height" placeholder="Height" />
+      <input type="text" id="inputHeight" name="height" placeholder="Height"
+        value="<%= healthProfile ? healthProfile.get('height') : '' %>" />
     </div>
   </div>
   
+  <br/>
+
+  <input type="hidden" name="person_id" value="<%= person_id %>" />
+  <% if (healthProfile) { %>
+    <input type="hidden" value = "<%= healthProfile.get('healthprofile_id') %>" name="healthprofile_id"/>
+  <% }; %>
+  
   <div class="form-actions">
-    <% if (healthprofile) { %>
+    <% if (healthProfile) { %>
       <button type="submit" class="btn btn-large btn-primary">
         <i class="icon-edit icon-white"></i> Update Health Profile
       </button>
+      
+      <button type="button" class="btn btn-large btn-danger deleteHealthProfile" 
+         onclick="return confirm('Are you sure?')">
+         <i class="icon-trash icon-white"></i> Delete Health Profile
+      </button>
+
     <% } else { %> 
       <button type="submit" class="btn btn-large btn-success">Create Health Profile</button>
     <% } %>

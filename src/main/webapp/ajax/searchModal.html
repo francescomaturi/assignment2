@@ -2,7 +2,7 @@
 	tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
 			  
 	  <div class="modal-header">
-	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
 	    <h3 id="searchModalLabel">Search Person</h3>
 	  </div>
 
@@ -23,8 +23,8 @@
 	  	</div>
 
 	  	<hr/>
-
-	  	<div id="form-container"></div>
+      
+      <form class="form-horizontal" id="searchForm"></form>
 	  
 	  </div>
 
@@ -38,16 +38,15 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 
-		$("div#form-container").load("/../ajax/measureForm.html");
+		$("form#searchForm").load("/../ajax/measureForm.html");
 
 		$("select#condition").change(function(){
 			var val = $("select#condition").val();
 			if (val == "measure"){
-				$("div#form-container").load("/../ajax/measureForm.html");
+				$("form#searchForm").load("/../ajax/measureForm.html");
 			} else {
-				$("div#form-container").load("/../ajax/birthdateForm.html");
+				$("form#searchForm").load("/../ajax/birthdateForm.html");
 			}
-
 		});
 	});
 </script>
