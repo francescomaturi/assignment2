@@ -16,8 +16,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import assignment2.hibernate.PeopleCompareDB;
 import assignment2.hibernate.HealthProfileDB;
+import assignment2.hibernate.PeopleCompareDB;
 import assignment2.hibernate.PeopleDB;
 import assignment2.model.HealthProfile;
 import assignment2.model.Person;
@@ -35,7 +35,6 @@ public class RestService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeople() {
-
 		return PeopleDB.getPeople();
 	}
 
@@ -70,46 +69,41 @@ public class RestService {
 	@Path("/{p_id}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Person getPerson(@PathParam("p_id") Long p_id) {
-
-		Person p = PeopleDB.getPerson(p_id);
-
-		p.setHealthProfileIds(HealthProfileDB.getHealthProfileIds(p_id));
-		return p;
+		return PeopleDB.getPerson(p_id);
 	}
 
 	@PUT
 	@Path("/{p_id}")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response updatePerson(@PathParam("p_id") Long p_id,
-			Person updatedPerson) {
+	public Response updatePerson(@PathParam("p_id") Long p_id, Person json) {
 
 		Person dbPerson = PeopleDB.getPerson(p_id);
 
-		if (dbPerson != null && updatedPerson.getFirstname() != null
-				&& updatedPerson.getLastname() != null
-				&& updatedPerson.getBirthdate() != null
-				&& updatedPerson.getWeight() != null
-				&& updatedPerson.getHeight() != null) {
+		if (dbPerson != null && json.getFirstname() != null
+				&& json.getLastname() != null && json.getBirthdate() != null
+				&& json.getWeight() != null && json.getHeight() != null) {
 
 			// metto nella history il corrente perche ora lo aggiorno
 			HealthProfileDB.saveHealthProfile(new HealthProfile(dbPerson
 					.getPerson_id(), dbPerson.getWeight(),
 					dbPerson.getHeight(), dbPerson.getLastupdate()));
 
-			dbPerson.setFirstname(updatedPerson.getFirstname());
-			dbPerson.setLastname(updatedPerson.getLastname());
-			dbPerson.setBirthdate(updatedPerson.getBirthdate());
-			dbPerson.setHeight(updatedPerson.getHeight());
-			dbPerson.setWeight(updatedPerson.getWeight());
+			// aggionro i dati della persona
+			dbPerson.setFirstname(json.getFirstname());
+			dbPerson.setLastname(json.getLastname());
+			dbPerson.setBirthdate(json.getBirthdate());
+
+			// aggiorno i valori correnti
+			dbPerson.setHeight(json.getHeight());
+			dbPerson.setWeight(json.getWeight());
 			dbPerson.setLastupdate(new Date());
 
+			// aggiorno nel db la persona
 			dbPerson = PeopleDB.updatePerson(dbPerson);
 
-			dbPerson.setHealthProfileIds(HealthProfileDB
-					.getHealthProfileIds(p_id));
-
 			return Response.status(Response.Status.OK).entity(dbPerson).build();
+
 		} else {
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
@@ -125,7 +119,6 @@ public class RestService {
 
 			ArrayList<HealthProfile> history = HealthProfileDB
 					.getPersonHealthProfileHistory(p_id);
-
 			person.setHealthProfileHistory(history);
 
 			HealthProfileDB.deletePersonHealthProfileHistory(history);
@@ -149,25 +142,23 @@ public class RestService {
 	public ArrayList<HealthProfile> getPersonHealthProfileHistory(
 			@PathParam("p_id") Long p_id) {
 
-		// Person person = PersonDB.getPerson(p_id);
-		// if (person != null) {
-		// person.setHealthProfileHistory(HealthProfileDB
-		// .getPersonHealthProfileHistory(p_id));
-		// }
-		return HealthProfileDB.getPersonHealthProfileHistory(p_id);
+		ArrayList<HealthProfile> history = HealthProfileDB
+				.getPersonHealthProfileHistory(p_id);
+
+		return !history.isEmpty() ? history : null;
 	}
 
 	@POST
 	@Path("/{p_id}/healthprofile")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Person setHealthProfile(@PathParam("p_id") Long p_id,
-			HealthProfile newHp) {
+	public ArrayList<HealthProfile> setHealthProfile(
+			@PathParam("p_id") Long p_id, HealthProfile json) {
 
 		Person dbPerson = PeopleDB.getPerson(p_id);
 
-		if (dbPerson != null && newHp != null && newHp.getHeight() != null
-				&& newHp.getWeight() != null) {
+		if (dbPerson != null && json != null && json.getHeight() != null
+				&& json.getWeight() != null) {
 
 			// metto nella history il corrente perche ora lo aggiorno
 			HealthProfileDB.saveHealthProfile(new HealthProfile(dbPerson
@@ -176,16 +167,16 @@ public class RestService {
 
 			// aggiorno la persona col nuovo hp
 			dbPerson.setLastupdate(new Date());
-			dbPerson.setHeight(newHp.getHeight());
-			dbPerson.setWeight(newHp.getWeight());
+			dbPerson.setHeight(json.getHeight());
+			dbPerson.setWeight(json.getWeight());
 
 			dbPerson = PeopleDB.updatePerson(dbPerson);
-
-			dbPerson.setHealthProfileHistory(HealthProfileDB
-					.getPersonHealthProfileHistory(p_id));
 		}
 
-		return dbPerson;
+		ArrayList<HealthProfile> history = HealthProfileDB
+				.getPersonHealthProfileHistory(p_id);
+
+		return !history.isEmpty() ? history : null;
 	}
 
 	/**
@@ -221,10 +212,9 @@ public class RestService {
 			dbHp = HealthProfileDB.updateHealthProfile(dbHp);
 
 			return Response.status(Response.Status.OK).entity(dbHp).build();
-
-		} else {
-			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
+
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 	@DELETE
@@ -233,29 +223,22 @@ public class RestService {
 	public Response deleteHealthProfileX(@PathParam("p_id") Long p_id,
 			@PathParam("hp_id") Long hp_id) {
 
-		Person person = PeopleDB.getPerson(p_id);
-		if (person != null) {
+		HealthProfile hp = HealthProfileDB
+				.getSpecificHealthProfile(p_id, hp_id);
 
-			HealthProfile hp = HealthProfileDB.getSpecificHealthProfile(p_id,
-					hp_id);
+		if (hp != null) {
+			HealthProfileDB.deleteHealthProfile(hp_id);
 
-			if (hp != null) {
-				HealthProfileDB.deleteHealthProfile(hp_id);
-
-				person.setHealthProfileHistory(HealthProfileDB
-						.getPersonHealthProfileHistory(p_id));
-
-				return Response.status(Response.Status.OK).entity(person)
-						.build();
-			}
+			return Response.status(Response.Status.OK).entity(hp).build();
 		}
+
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 	/**
 	 * GET
 	 * 
-	 * /person/birthdate?after=dd-mm-yyyy&before=dd-mm-yyyy
+	 * /person/birthdate?from=dd-mm-yyyy&to=dd-mm-yyyy
 	 */
 
 	@GET
@@ -266,9 +249,10 @@ public class RestService {
 			@QueryParam("from") String after_qp) {
 
 		if (after_qp != null && before_qp != null) {
+			ArrayList<Person> list = PeopleCompareDB.birthdate(
+					Utils.parseDate(after_qp), Utils.parseDate(before_qp));
 
-			return PeopleCompareDB.searchBirthdate(Utils.parseDate(after_qp),
-					Utils.parseDate(before_qp));
+			return !list.isEmpty() ? list : null;
 		}
 		return null;
 	}
@@ -286,25 +270,24 @@ public class RestService {
 			@QueryParam("measure") String measure,
 			@QueryParam("max") Double max, @QueryParam("min") Double min) {
 
-		ArrayList<Person> list = null;
-
 		if (measure != null) {
 
 			if (measure.equalsIgnoreCase("height")) {
-				list = PeopleCompareDB.getPersonByHeight(min, max);
+				ArrayList<Person> list = PeopleCompareDB.height(min, max);
+				return !list.isEmpty() ? list : null;
 
 			} else if (measure.equalsIgnoreCase("weight")) {
-				list = PeopleCompareDB.getPersonByWeight(min, max);
+				ArrayList<Person> list = PeopleCompareDB.weight(min, max);
+				return !list.isEmpty() ? list : null;
 			}
 		}
-
-		return list;
+		return null;
 	}
 
 	/**
 	 * GET
 	 * 
-	 * /person/search?firstname=name&lastname=surname
+	 * /person/search?q=TEXT_TO_SEARCH
 	 */
 
 	@GET
@@ -312,53 +295,15 @@ public class RestService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeopleByMeasure(@QueryParam("q") String query) {
 
-		if (query != null && Utils.parseQuery(query).size() > 0) {
+		if (query != null) {
 
-			List<String> string = Utils.parseQuery(query);
+			String[] string = query.trim().split("\\s+");
 
-			if (string.size() == 1) {
-
-				String name = string.get(0);
-
-				ArrayList<Person> list1 = PeopleCompareDB
-						.searchInFirstname(name);
-				ArrayList<Person> list2 = PeopleCompareDB
-						.searchInLastname(name);
-
-				return Utils.createUniqueList(list1, list2);
-
-			} else if (string.size() == 2) {
-
-				String firstname = string.get(0), lastname = string.get(1);
-
-				ArrayList<Person> list1 = PeopleCompareDB
-						.searchInFirstname(firstname);
-				ArrayList<Person> list2 = PeopleCompareDB
-						.searchInLastname(lastname);
-
-				return Utils.createUniqueList(list1, list2);
-
-			} else {
-				// (string.size() >= 3)
-				String firstname = string.get(0), lastname = string.get(1)
-						+ " " + string.get(2);
-
-				ArrayList<Person> list1 = PeopleCompareDB.searchPerson(
-						firstname, lastname);
-
-				firstname = string.get(0) + " " + string.get(1);
-				lastname = string.get(2);
-
-				ArrayList<Person> list2 = PeopleCompareDB.searchPerson(
-						firstname, lastname);
-
-				return Utils.createUniqueList(list1, list2);
-
+			if (string.length > 0) {
+				ArrayList<Person> list = PeopleCompareDB.search(string);
+				return !list.isEmpty() ? list : null;
 			}
-
-		} else {
-
-			return PeopleDB.getPeople();
 		}
+		return PeopleDB.getPeople();
 	}
 }

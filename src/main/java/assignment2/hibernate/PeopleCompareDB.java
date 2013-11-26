@@ -2,22 +2,27 @@ package assignment2.hibernate;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 import assignment2.model.Person;
 
 public class PeopleCompareDB {
+
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Person> searchBirthdate(Date from, Date to) {
+	public static ArrayList<Person> birthdate(Date from, Date to) {
+
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
 		ArrayList<Person> list = null;
+
 		try {
 			transaction = session.beginTransaction();
 			Criteria query = session.createCriteria(Person.class);
@@ -50,10 +55,12 @@ public class PeopleCompareDB {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Person> getPersonByWeight(Double min, Double max) {
+	public static ArrayList<Person> weight(Double min, Double max) {
+
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
 		ArrayList<Person> list = null;
+
 		try {
 			transaction = session.beginTransaction();
 
@@ -87,10 +94,12 @@ public class PeopleCompareDB {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Person> getPersonByHeight(Double min, Double max) {
+	public static ArrayList<Person> height(Double min, Double max) {
+
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
 		ArrayList<Person> list = null;
+
 		try {
 			transaction = session.beginTransaction();
 
@@ -124,70 +133,28 @@ public class PeopleCompareDB {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Person> searchInFirstname(String firstname) {
+	public static ArrayList<Person> search(String... text) {
+
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
 		ArrayList<Person> list = null;
-		try {
-			transaction = session.beginTransaction();
 
-			list = (ArrayList<Person>) session
-					.createCriteria(Person.class)
-					.add(Restrictions.ilike("firstname", firstname,
-							MatchMode.ANYWHERE)).list();
-
-			transaction.commit();
-		} catch (HibernateException e) {
-			// rollback transaction
-			if (transaction != null) {
-				transaction.rollback();
-			}
-		} finally {
-			session.close();
-		}
-		return list;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static ArrayList<Person> searchInLastname(String lastname) {
-		Session session = Hibernate.getSessionFactory().openSession();
-		Transaction transaction = null;
-		ArrayList<Person> list = null;
-		try {
-			transaction = session.beginTransaction();
-
-			list = (ArrayList<Person>) session
-					.createCriteria(Person.class)
-					.add(Restrictions.ilike("lastname", lastname,
-							MatchMode.ANYWHERE)).list();
-
-			transaction.commit();
-		} catch (HibernateException e) {
-			// rollback transaction
-			if (transaction != null) {
-				transaction.rollback();
-			}
-		} finally {
-			session.close();
-		}
-		return list;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static ArrayList<Person> searchPerson(String firstname,
-			String lastname) {
-		Session session = Hibernate.getSessionFactory().openSession();
-		Transaction transaction = null;
-		ArrayList<Person> list = null;
 		try {
 			transaction = session.beginTransaction();
 
 			Criteria query = session.createCriteria(Person.class);
 
-			query.add(Restrictions.ilike("lastname", lastname,
-					MatchMode.ANYWHERE));
-			query.add(Restrictions.ilike("firstname", firstname,
-					MatchMode.ANYWHERE));
+			List<Criterion> criterias = new ArrayList<Criterion>();
+
+			for (int i = 0; i < text.length; i++) {
+				criterias.add(Restrictions.ilike("firstname", text[i],
+						MatchMode.ANYWHERE));
+				criterias.add(Restrictions.ilike("lastname", text[i],
+						MatchMode.ANYWHERE));
+			}
+			Criterion[] arr = new Criterion[criterias.size()];
+
+			query.add(Restrictions.or(criterias.toArray(arr)));
 
 			list = (ArrayList<Person>) query.list();
 
@@ -202,5 +169,4 @@ public class PeopleCompareDB {
 		}
 		return list;
 	}
-
 }

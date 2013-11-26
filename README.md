@@ -62,7 +62,7 @@ Updates weight and height of the specified healthprofile of the specified person
 
 Delete the specified healthprofile. The data removed from the database will be returned in the response.
 
-**GET  /person/birthdate?after=DD-MM-YYYY&before=DD-MM-YYYY**
+**GET  /person/birthdate?from=DD-MM-YYYY&to=DD-MM-YYYY**
 
 Returns all the people that have the birthday in the specified range.
 
