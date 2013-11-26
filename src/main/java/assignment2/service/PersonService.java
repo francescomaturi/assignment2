@@ -1,5 +1,6 @@
 package assignment2.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -139,15 +140,15 @@ public class PersonService {
 	@GET
 	@Path("/{p_id}/healthprofile")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Person getPersonHealthProfileHistory(@PathParam("p_id") Long p_id) {
+	public ArrayList<HealthProfile> getPersonHealthProfileHistory(
+			@PathParam("p_id") Long p_id) {
 
-		Person person = PersonDB.getPerson(p_id);
-		if (person != null) {
-
-			person.setHealthProfileHistory(HealthProfileDB
-					.getPersonHealthProfileHistory(p_id));
-		}
-		return person;
+		// Person person = PersonDB.getPerson(p_id);
+		// if (person != null) {
+		// person.setHealthProfileHistory(HealthProfileDB
+		// .getPersonHealthProfileHistory(p_id));
+		// }
+		return HealthProfileDB.getPersonHealthProfileHistory(p_id);
 	}
 
 	@POST
@@ -244,16 +245,26 @@ public class PersonService {
 		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
+	/**
+	 * GET
+	 * 
+	 * /person/birthdate?after=dd-mm-yyyy&before=dd-mm-yyyy
+	 */
+
 	@GET
-	@Path("/search")
+	@Path("/birthdate")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Person getHealthProfile(@PathParam("p_id") Long p_id,
+	public ArrayList<Person> getHealthProfile(@PathParam("p_id") Long p_id,
 			@QueryParam("before") String before,
 			@QueryParam("after") String after) {
-		
-		
-		
-		return null;
+		ArrayList<Person> list = null;
+
+		if (after != null && before != null) {
+
+			SimpleDateFormat format = new SimpleDateFormat("");
+
+		}
+		return list;
 	}
 	// Person p = PersonDB.getPerson(p_id);
 	// if (p != null) {
