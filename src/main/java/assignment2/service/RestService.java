@@ -257,8 +257,8 @@ public class RestService {
 	@Path("/birthdate")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public ArrayList<Person> getPeopleByBirthdate(@PathParam("p_id") Long p_id,
-			@QueryParam("before") String before_qp,
-			@QueryParam("after") String after_qp) {
+			@QueryParam("to") String before_qp,
+			@QueryParam("from") String after_qp) {
 
 		if (after_qp != null && before_qp != null) {
 
@@ -307,23 +307,53 @@ public class RestService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeopleByMeasure(@QueryParam("q") String query) {
 
-		List<Person> list;
-
-		if (query != null) {
+		if (query != null && Utils.parseQuery(query).size() > 0) {
 
 			List<String> string = Utils.parseQuery(query);
 
-			if (string.size() >= 3) {
+			if (string.size() == 1) {
+
+				String name = string.get(0);
+
+				ArrayList<Person> list1 = PeopleCompareDB
+						.searchInFirstname(name);
+				ArrayList<Person> list2 = PeopleCompareDB
+						.searchInLastname(name);
+
+				return Utils.createUniqueList(list1, list2);
+
 			} else if (string.size() == 2) {
-			} else if (string.size() == 1) {
+
+				String firstname = string.get(0), lastname = string.get(1);
+
+				ArrayList<Person> list1 = PeopleCompareDB
+						.searchInFirstname(firstname);
+				ArrayList<Person> list2 = PeopleCompareDB
+						.searchInLastname(lastname);
+
+				return Utils.createUniqueList(list1, list2);
+
+			} else {
+				// (string.size() >= 3)
+				String firstname = string.get(0), lastname = string.get(1)
+						+ " " + string.get(2);
+
+				ArrayList<Person> list1 = PeopleCompareDB.searchPerson(
+						firstname, lastname);
+
+				firstname = string.get(0) + " " + string.get(1);
+				lastname = string.get(2);
+
+				ArrayList<Person> list2 = PeopleCompareDB.searchPerson(
+						firstname, lastname);
+
+				return Utils.createUniqueList(list1, list2);
+
 			}
 
-			list = null;
 		} else {
 
-			list = PeopleDB.getPeople();
+			return PeopleDB.getPeople();
 		}
-
-		return list;
 	}
 }
