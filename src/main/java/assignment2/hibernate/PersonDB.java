@@ -8,7 +8,7 @@ import org.hibernate.Transaction;
 
 import assignment2.model.Person;
 
-public class PeopleDB {
+public class PersonDB {
 
 	public static Person savePerson(Person person) {
 		Session session = Hibernate.getSessionFactory().openSession();

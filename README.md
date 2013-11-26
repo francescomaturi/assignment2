@@ -62,14 +62,14 @@ Updates weight and height of the specified healthprofile of the specified person
 
 Delete the specified healthprofile. The data removed from the database will be returned in the response.
 
-**GET  /person/birthdate?from=DD-MM-YYYY&to=DD-MM-YYYY**
+**GET  /search/birthdate?from=DD-MM-YYYY&to=DD-MM-YYYY**
 
 Returns all the people that have the birthday in the specified range.
 
-**GET  /person/profile?measure={height|weight}&min=MIN&max=MAX**
+**GET  /search/profile?measure={height|weight}&min=MIN&max=MAX**
 
 Returns all the people that are in the specified range of height or weight.
 
-**GET  /person/search?q=TEXT_TO_SEARCH**
+**GET  /search/name?q=TEXT_TO_SEARCH**
 
 Returns the people that have firstname or lastname matching the TEXT_TO_SEARCH 

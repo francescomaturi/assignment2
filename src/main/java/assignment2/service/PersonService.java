@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import assignment2.hibernate.HealthProfileDB;
-import assignment2.hibernate.PeopleDB;
+import assignment2.hibernate.PersonDB;
 import assignment2.model.HealthProfile;
 import assignment2.model.Person;
 
@@ -32,7 +32,7 @@ public class PersonService {
 	@GET
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeople() {
-		return PeopleDB.getPeople();
+		return PersonDB.getPeople();
 	}
 
 	@POST
@@ -47,7 +47,7 @@ public class PersonService {
 			person.setPerson_id(null);
 			person.setLastupdate(new Date());
 
-			person = PeopleDB.savePerson(person);
+			person = PersonDB.savePerson(person);
 
 			return Response.status(Response.Status.OK).entity(person).build();
 
@@ -68,7 +68,7 @@ public class PersonService {
 	@Path("/{p_id}")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Person getPerson(@PathParam("p_id") Long p_id) {
-		return PeopleDB.getPerson(p_id);
+		return PersonDB.getPerson(p_id);
 	}
 
 	@PUT
@@ -77,7 +77,7 @@ public class PersonService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updatePerson(@PathParam("p_id") Long p_id, Person json) {
 
-		Person dbPerson = PeopleDB.getPerson(p_id);
+		Person dbPerson = PersonDB.getPerson(p_id);
 
 		if (dbPerson != null && json.getFirstname() != null
 				&& json.getLastname() != null && json.getBirthdate() != null
@@ -99,7 +99,7 @@ public class PersonService {
 			dbPerson.setLastupdate(new Date());
 
 			// aggiorno nel db la persona
-			dbPerson = PeopleDB.updatePerson(dbPerson);
+			dbPerson = PersonDB.updatePerson(dbPerson);
 
 			return Response.status(Response.Status.OK).entity(dbPerson).build();
 
@@ -113,7 +113,7 @@ public class PersonService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response deletePerson(@PathParam("p_id") Long p_id) {
 
-		Person person = PeopleDB.deletePerson(p_id);
+		Person person = PersonDB.deletePerson(p_id);
 		if (person != null) {
 
 			ArrayList<HealthProfile> history = HealthProfileDB

@@ -10,18 +10,18 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import assignment2.hibernate.PeopleCompareDB;
-import assignment2.hibernate.PeopleDB;
+import assignment2.hibernate.ComparisonDB;
+import assignment2.hibernate.PersonDB;
 import assignment2.model.Person;
 import assignment2.utils.Utils;
 
 @Path("/search")
-public class RestService {
+public class SearchService {
 
 	/**
 	 * GET
 	 * 
-	 * /person/birthdate?from=dd-mm-yyyy&to=dd-mm-yyyy
+	 * /search/birthdate?from=dd-mm-yyyy&to=dd-mm-yyyy
 	 */
 
 	@GET
@@ -32,7 +32,7 @@ public class RestService {
 			@QueryParam("from") String after_qp) {
 
 		if (after_qp != null && before_qp != null) {
-			ArrayList<Person> list = PeopleCompareDB.birthdate(
+			ArrayList<Person> list = ComparisonDB.birthdate(
 					Utils.parseDate(after_qp), Utils.parseDate(before_qp));
 
 			return !list.isEmpty() ? list : null;
@@ -43,7 +43,7 @@ public class RestService {
 	/**
 	 * GET
 	 * 
-	 * /person/profile?measure={height|weight}&min=MIN&max=MAX
+	 * /search/profile?measure={height|weight}&min=MIN&max=MAX
 	 */
 
 	@GET
@@ -56,11 +56,11 @@ public class RestService {
 		if (measure != null) {
 
 			if (measure.equalsIgnoreCase("height")) {
-				ArrayList<Person> list = PeopleCompareDB.height(min, max);
+				ArrayList<Person> list = ComparisonDB.height(min, max);
 				return !list.isEmpty() ? list : null;
 
 			} else if (measure.equalsIgnoreCase("weight")) {
-				ArrayList<Person> list = PeopleCompareDB.weight(min, max);
+				ArrayList<Person> list = ComparisonDB.weight(min, max);
 				return !list.isEmpty() ? list : null;
 			}
 		}
@@ -70,11 +70,11 @@ public class RestService {
 	/**
 	 * GET
 	 * 
-	 * /person/search?q=TEXT_TO_SEARCH
+	 * /search/name?q=TEXT_TO_SEARCH
 	 */
 
 	@GET
-	@Path("/search")
+	@Path("/name")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeopleByMeasure(@QueryParam("q") String query) {
 
@@ -83,11 +83,11 @@ public class RestService {
 			String[] string = query.trim().split("\\s+");
 
 			if (string.length > 0) {
-				ArrayList<Person> list = PeopleCompareDB.search(string);
+				ArrayList<Person> list = ComparisonDB.search(string);
 				return !list.isEmpty() ? list : null;
 			}
 		}
-		return PeopleDB.getPeople();
+		return PersonDB.getPeople();
 	}
 
 }

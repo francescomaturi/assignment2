@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import assignment2.hibernate.HealthProfileDB;
-import assignment2.hibernate.PeopleDB;
+import assignment2.hibernate.PersonDB;
 import assignment2.model.HealthProfile;
 import assignment2.model.Person;
 
@@ -45,7 +45,7 @@ public class HealthProfileService {
 	public ArrayList<HealthProfile> setHealthProfile(
 			@PathParam("p_id") Long p_id, HealthProfile json) {
 
-		Person dbPerson = PeopleDB.getPerson(p_id);
+		Person dbPerson = PersonDB.getPerson(p_id);
 
 		if (dbPerson != null && json != null && json.getHeight() != null
 				&& json.getWeight() != null) {
@@ -60,7 +60,7 @@ public class HealthProfileService {
 			dbPerson.setHeight(json.getHeight());
 			dbPerson.setWeight(json.getWeight());
 
-			dbPerson = PeopleDB.updatePerson(dbPerson);
+			dbPerson = PersonDB.updatePerson(dbPerson);
 		}
 
 		ArrayList<HealthProfile> history = HealthProfileDB
