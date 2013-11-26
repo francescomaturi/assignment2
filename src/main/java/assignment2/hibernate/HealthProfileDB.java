@@ -13,7 +13,7 @@ import assignment2.model.HealthProfile;
 public class HealthProfileDB {
 
 	@SuppressWarnings("unchecked")
-	public static ArrayList<Long> getHealthProfileHistoryIds(Long p_id) {
+	public static ArrayList<Long> getHealthProfileIds(Long p_id) {
 		Session session = Hibernate.getSessionFactory().openSession();
 		Transaction transaction = null;
 		ArrayList<Long> ids = null;

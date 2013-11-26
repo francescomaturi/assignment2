@@ -42,11 +42,12 @@ public class PersonService {
 	public Response createPerson(Person person) {
 		// controllo perche magari non mi parsa la data correttamente JAXB
 		if (person.getBirthdate() != null && person.getWeight() != null
-				&& person.getHeight() != null) {
-			// se me l'hai passato lo annullo perche me lo genera il DB
-			person.setPerson_id(null);
+				&& person.getHeight() != null && person.getFirstname() != null
+				&& person.getLastname() != null) {
 
+			person.setPerson_id(null);
 			person.setLastupdate(new Date());
+
 			person = PersonDB.savePerson(person);
 
 			return Response.status(Response.Status.OK).entity(person).build();
@@ -68,7 +69,8 @@ public class PersonService {
 	public Person getPerson(@PathParam("p_id") Long p_id) {
 
 		Person p = PersonDB.getPerson(p_id);
-		p.setHistory(HealthProfileDB.getHealthProfileHistoryIds(p_id));
+
+		p.setHealthProfileIds(HealthProfileDB.getHealthProfileIds(p_id));
 		return p;
 	}
 
@@ -95,9 +97,8 @@ public class PersonService {
 			updatedPerson.setLastupdate(new Date());
 			updatedPerson = PersonDB.updatePerson(updatedPerson);
 
-			// lo commento solo per consistenza con le altre risposte
-			// updatedPerson.setHealthProfileHistory(HealthProfileDB
-			// .getPersonHealthProfileHistory(p_id));
+			updatedPerson.setHealthProfileIds(HealthProfileDB
+					.getHealthProfileIds(p_id));
 
 			return Response.status(Response.Status.OK).entity(updatedPerson)
 					.build();

@@ -21,7 +21,7 @@ import assignment2.adapter.DateAdapter;
 @Table
 @XmlType(propOrder = { "person_id", "firstname", "lastname", "birthdate",
 		"height", "weight", "bmi", "lastupdate", "healthProfileHistory",
-		"history" })
+		"healthProfileIds" })
 public class Person {
 
 	@Id
@@ -41,7 +41,7 @@ public class Person {
 	private ArrayList<HealthProfile> healthProfileHistory;
 
 	@Transient
-	private ArrayList<Long> history;
+	private ArrayList<Long> healthProfileIds;
 
 	public Person() {
 		super();
@@ -143,11 +143,11 @@ public class Person {
 		this.healthProfileHistory = healthProfileHistory;
 	}
 
-	public ArrayList<Long> getHistory() {
-		return history;
+	public ArrayList<Long> getHealthProfileIds() {
+		return healthProfileIds;
 	}
 
-	public void setHistory(ArrayList<Long> history) {
-		this.history = history;
+	public void setHealthProfileIds(ArrayList<Long> healthProfileIds) {
+		this.healthProfileIds = healthProfileIds;
 	}
 }
