@@ -86,9 +86,7 @@ public class RestService {
 
 		Person dbPerson = PeopleDB.getPerson(p_id);
 
-		if (dbPerson != null
-				&& dbPerson.getPerson_id().equals(updatedPerson.getPerson_id())
-				&& updatedPerson.getBirthdate() != null
+		if (dbPerson != null && updatedPerson.getBirthdate() != null
 				&& updatedPerson.getWeight() != null
 				&& updatedPerson.getHeight() != null) {
 
