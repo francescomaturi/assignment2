@@ -1,7 +1,5 @@
 package assignment2.service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,8 +16,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import assignment2.hibernate.PeopleCompareDB;
 import assignment2.hibernate.HealthProfileDB;
-import assignment2.hibernate.PersonDB;
+import assignment2.hibernate.PeopleDB;
 import assignment2.model.HealthProfile;
 import assignment2.model.Person;
 import assignment2.utils.Utils;
@@ -37,7 +36,7 @@ public class RestService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeople() {
 
-		return PersonDB.getPeople();
+		return PeopleDB.getPeople();
 	}
 
 	@POST
@@ -52,7 +51,7 @@ public class RestService {
 			person.setPerson_id(null);
 			person.setLastupdate(new Date());
 
-			person = PersonDB.savePerson(person);
+			person = PeopleDB.savePerson(person);
 
 			return Response.status(Response.Status.OK).entity(person).build();
 
@@ -72,7 +71,7 @@ public class RestService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Person getPerson(@PathParam("p_id") Long p_id) {
 
-		Person p = PersonDB.getPerson(p_id);
+		Person p = PeopleDB.getPerson(p_id);
 
 		p.setHealthProfileIds(HealthProfileDB.getHealthProfileIds(p_id));
 		return p;
@@ -85,7 +84,7 @@ public class RestService {
 	public Response updatePerson(@PathParam("p_id") Long p_id,
 			Person updatedPerson) {
 
-		Person dbPerson = PersonDB.getPerson(p_id);
+		Person dbPerson = PeopleDB.getPerson(p_id);
 
 		if (dbPerson != null
 				&& dbPerson.getPerson_id().equals(updatedPerson.getPerson_id())
@@ -99,7 +98,7 @@ public class RestService {
 					dbPerson.getHeight(), dbPerson.getLastupdate()));
 
 			updatedPerson.setLastupdate(new Date());
-			updatedPerson = PersonDB.updatePerson(updatedPerson);
+			updatedPerson = PeopleDB.updatePerson(updatedPerson);
 
 			updatedPerson.setHealthProfileIds(HealthProfileDB
 					.getHealthProfileIds(p_id));
@@ -116,7 +115,7 @@ public class RestService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response deletePerson(@PathParam("p_id") Long p_id) {
 
-		Person person = PersonDB.deletePerson(p_id);
+		Person person = PeopleDB.deletePerson(p_id);
 		if (person != null) {
 
 			ArrayList<HealthProfile> history = HealthProfileDB
@@ -160,7 +159,7 @@ public class RestService {
 	public Person setHealthProfile(@PathParam("p_id") Long p_id,
 			HealthProfile newHp) {
 
-		Person dbPerson = PersonDB.getPerson(p_id);
+		Person dbPerson = PeopleDB.getPerson(p_id);
 
 		if (dbPerson != null && newHp != null && newHp.getHeight() != null
 				&& newHp.getWeight() != null) {
@@ -175,7 +174,7 @@ public class RestService {
 			dbPerson.setHeight(newHp.getHeight());
 			dbPerson.setWeight(newHp.getWeight());
 
-			dbPerson = PersonDB.updatePerson(dbPerson);
+			dbPerson = PeopleDB.updatePerson(dbPerson);
 
 			dbPerson.setHealthProfileHistory(HealthProfileDB
 					.getPersonHealthProfileHistory(p_id));
@@ -229,7 +228,7 @@ public class RestService {
 	public Response deleteHealthProfileX(@PathParam("p_id") Long p_id,
 			@PathParam("hp_id") Long hp_id) {
 
-		Person person = PersonDB.getPerson(p_id);
+		Person person = PeopleDB.getPerson(p_id);
 		if (person != null) {
 
 			HealthProfile hp = HealthProfileDB.getSpecificHealthProfile(p_id,
@@ -257,50 +256,14 @@ public class RestService {
 	@GET
 	@Path("/birthdate")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public ArrayList<Person> getPeopleByBirthday(@PathParam("p_id") Long p_id,
+	public ArrayList<Person> getPeopleByBirthdate(@PathParam("p_id") Long p_id,
 			@QueryParam("before") String before_qp,
 			@QueryParam("after") String after_qp) {
 
 		if (after_qp != null && before_qp != null) {
 
-			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
-			Date before, after;
-
-			try {
-				before = format.parse(before_qp);
-
-			} catch (ParseException e) {
-				before = null;
-			}
-
-			try {
-				after = format.parse(after_qp);
-
-			} catch (ParseException e) {
-				after = null;
-			}
-			return PersonDB.searchBirthdate(after, before);
-		}
-		return null;
-	}
-
-	/**
-	 * GET
-	 * 
-	 * /person/birthdate?after=dd-mm-yyyy&before=dd-mm-yyyy
-	 */
-
-	@GET
-	@Path("/measure")
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public ArrayList<Person> getPeopleByBirthdate(
-			@QueryParam("before") String before_qp,
-			@QueryParam("after") String after_qp) {
-
-		if (after_qp != null && before_qp != null) {
-
-			return PersonDB.searchBirthdate(Utils.parse(after_qp),
-					Utils.parse(before_qp));
+			return PeopleCompareDB.searchBirthdate(Utils.parseDate(after_qp),
+					Utils.parseDate(before_qp));
 		}
 		return null;
 	}
@@ -323,14 +286,44 @@ public class RestService {
 		if (measure != null) {
 
 			if (measure.equalsIgnoreCase("height")) {
-				list = PersonDB.getPersonByHeight(min, max);
+				list = PeopleCompareDB.getPersonByHeight(min, max);
 
 			} else if (measure.equalsIgnoreCase("weight")) {
-				list = PersonDB.getPersonByWeight(min, max);
+				list = PeopleCompareDB.getPersonByWeight(min, max);
 			}
 		}
 
 		return list;
 	}
 
+	/**
+	 * GET
+	 * 
+	 * /person/search?firstname=name&lastname=surname
+	 */
+
+	@GET
+	@Path("/search")
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public List<Person> getPeopleByMeasure(@QueryParam("q") String query) {
+
+		List<Person> list;
+
+		if (query != null) {
+
+			List<String> string = Utils.parseQuery(query);
+
+			if (string.size() >= 3) {
+			} else if (string.size() == 2) {
+			} else if (string.size() == 1) {
+			}
+
+			list = null;
+		} else {
+
+			list = PeopleDB.getPeople();
+		}
+
+		return list;
+	}
 }
