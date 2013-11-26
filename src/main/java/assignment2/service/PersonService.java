@@ -199,28 +199,23 @@ public class PersonService {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response updateHealthProfileX(@PathParam("p_id") Long p_id,
-			@PathParam("hp_id") Long hp_id, HealthProfile hp) {
+			@PathParam("hp_id") Long hp_id, HealthProfile newHp) {
 
-		Person person = PersonDB.getPerson(p_id);
-		if (person != null && hp.getWeight() != null && hp.getHeight() != null) {
+		HealthProfile dbHp = HealthProfileDB.getSpecificHealthProfile(p_id,
+				hp_id);
+		if (dbHp != null && newHp.getWeight() != null
+				&& newHp.getHeight() != null) {
 
-			HealthProfile old = HealthProfileDB.getSpecificHealthProfile(p_id,
-					hp_id);
-			if (old != null) {
+			dbHp.setHeight(newHp.getHeight());
+			dbHp.setWeight(newHp.getWeight());
 
-				old.setHeight(hp.getHeight());
-				old.setWeight(hp.getWeight());
+			dbHp = HealthProfileDB.updateHealthProfile(dbHp);
 
-				HealthProfileDB.updateHealthProfile(old);
+			return Response.status(Response.Status.OK).entity(dbHp).build();
 
-				person.setHealthProfileHistory(HealthProfileDB
-						.getPersonHealthProfileHistory(p_id));
-
-				return Response.status(Response.Status.OK).entity(person)
-						.build();
-			}
+		} else {
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 	@DELETE
