@@ -18,6 +18,10 @@
     border-top: 1px solid #ddd !important;
   }*/ }
 
+div.datepicker.dropdown-menu{
+  z-index: 9999;
+}
+
 .datepicker:before {
   content: '';
   display: inline-block;

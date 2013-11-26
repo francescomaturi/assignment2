@@ -1,0 +1,34 @@
+<script type="text/template" id="edit-healthprofile-template">
+
+<a href="#" class="btn"><i class="icon-arrow-left"></i> Back to person list</a>
+<br/><br/>
+<form class="new-person-form form-horizontal">
+  <legend><%= healthprofile ? 'Update' : 'Create' %> HealthProfile</legend>
+  
+  <div class="control-group">
+    <label class="control-label" for="inputWeight">Weight</label>
+    <div class="controls">
+      <input type="text" id="inputWeight" name="weight" placeholder="Weight" />
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <label class="control-label" for="inputHeight">Height</label>
+    <div class="controls">
+      <input type="text" id="inputHeight" name="height" placeholder="Height" />
+    </div>
+  </div>
+  
+  <div class="form-actions">
+    <% if (healthprofile) { %>
+      <button type="submit" class="btn btn-large btn-primary">
+        <i class="icon-edit icon-white"></i> Update Health Profile
+      </button>
+    <% } else { %> 
+      <button type="submit" class="btn btn-large btn-success">Create Health Profile</button>
+    <% } %>
+  </div>
+  
+</form>
+
+</script>

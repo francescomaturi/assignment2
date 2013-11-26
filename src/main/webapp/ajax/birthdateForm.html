@@ -1,0 +1,61 @@
+<form class="form-horizontal" id="birthdateForm">
+
+	<div class="control-group">
+		<label class="control-label" for="inputBefore">Before</label>
+		<div class="controls">
+			
+			<div class="input-append date" id="dp3" 
+						data-date="" 
+						data-date-format="dd-mm-yyyy">
+	    	
+	    	<input class="input-small" type="text" id="inputBefore" 
+	    				 placeholder="Before" name="before">
+	    				<span class="add-on"><i class="icon-th"></i></span>
+	  	</div>
+		
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="inputMax">After</label>
+		<div class="controls">
+
+			<div class="input-append date" id="dp2" 
+						data-date="" 
+						data-date-format="dd-mm-yyyy">
+	    	
+	    	<input class="input-small" type="text" id="inputAfter" 
+	    				 placeholder="After" name="after">
+	    				<span class="add-on"><i class="icon-th"></i></span>
+	  	</div>
+
+		</div>
+	</div>
+
+</form>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+	  
+	  window.prettyPrint && prettyPrint();
+	    $('#dp3').datepicker({
+			format: 'dd-mm-yyyy'
+		});
+
+	  window.prettyPrint && prettyPrint();
+	    $('#dp2').datepicker({
+			format: 'dd-mm-yyyy'
+		});
+
+	  var today = new Date();
+	  var dd = today.getDate();
+		var mm = today.getMonth()+1; //January is 0!
+		var yyyy = today.getFullYear();
+
+		if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} today = dd+'-'+mm+'-'+yyyy;
+
+		$("div.date").attr("data-date", today);
+		$("input.input-small").attr("value", today);
+
+  });
+</script>

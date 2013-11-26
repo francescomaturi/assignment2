@@ -9,11 +9,15 @@
 <link href="css/bootstrap-overrides.css" rel="stylesheet">
 <script type="text/javascript" src="js/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="js/bootstrap.js"></script>
+<script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="js/json2.js"></script>
 <script type="text/javascript" src="js/underscore.js"></script>
-<script type="text/javascript" src="js/backbone.js"></script>
-<script type="text/javascript" src="js/backbone-relational.js"></script>
-<script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="js/backbone/backbone.js"></script>
+<script type="text/javascript" src="js/backbone/backbone-relational.js"></script>
+<script type="text/javascript" src="js/backbone/backbone.EditPerson.js"></script>
+<script type="text/javascript" src="js/backbone/backbone.PersonList.js"></script>
+<script type="text/javascript" src="js/backbone/backbone.ShowPerson.js"></script>
+<script type="text/javascript" src="js/backbone/backbone.DeletePerson.js"></script>
 
 <script type="text/javascript">
 	$(document).ready(
@@ -21,17 +25,22 @@
 				var clientDirectory = "/../";
 
 				$("div#searchModal-container").load(
-						clientDirectory + "ajax/modal.html");
+						clientDirectory + "ajax/searchModal.html");
+				
 				$("div#navbar-container").load(
 						clientDirectory + "ajax/navbar.html");
+				
+				
 				$.get(clientDirectory + "template/person-list-template.html",
 						function(data) {
 							$(".container").append(data);
 						});
+
 				$.get(clientDirectory + "template/new-person-template.html",
 						function(data) {
 							$(".container").append(data);
 						});
+
 				$.get(clientDirectory + "template/show-person-template.html",
 						function(data) {
 							$(".container").append(data);
@@ -64,22 +73,52 @@
 			});
 			return o;
 		};
+		
+		var EditHealthProfile = Backbone.View.extend({
+      el : '.page',
+      render : function(options) {
+    	  var person = new Person({id : options.person_id, healthProfileHistory : [options.healthprofile_id] });
+        console.log(person);
+      }
+    }); 
+		
+		var personList = new PersonList();
+		var editPerson = new EditPerson();
+		var showPerson = new ShowPerson();
+		var deletePerson = new DeletePerson();
+		var editHealthProfile = new EditHealthProfile();
 
 		$.ajaxPrefilter(function(options, originalOptions, jqXR) {
 			options.url = "http://localhost:8080/RESTService/rest"
 					+ options.url;
 		});
 
-		Person = Backbone.Model.extend({
+		Person = Backbone.RelationalModel.extend({
 			urlRoot : '/person',
 			initialize : function() {
 				this.healthProfile = new HealthProfile;
 				this.healthProfile.url = '/person/' + this.id
 						+ '/healthprofile';
-			}
+			},
+			relations: [{
+			    type: Backbone.HasMany,
+			    key: 'healthProfileHistory',
+			    relatedModel: 'HealthProfile',
+			    collectionType: 'HealthProfileCollection',
+			    reverseRelation: {
+			      key: 'person',
+			      includeInJSON: 'id'
+			    }
+			}]
 		});
 
-		HealthProfile = Backbone.Model.extend({});
+		HealthProfile = Backbone.RelationalModel.extend({
+			urlRoot: '/healthprofile/'
+		});
+		
+		HealthProfileCollection = Backbone.Collection.extend({
+			model:HealthProfile;
+		});
 
 		People = Backbone.Collection.extend({
 			model : Person,
@@ -88,131 +127,15 @@
 				return response.person;
 			}
 		});
-
-		var PersonList = Backbone.View.extend({
-			el : '.page',
-			render : function() {
-				that = this;
-				var persons = new People();
-				persons.fetch({
-					success : function(people) {
-						var template = _.template($('#person-list-template')
-								.html(), {
-							people : people.models
-						});
-						that.$el.html(template);
-					}
-				});
-			}
-		});
-
-		var personList = new PersonList();
-
-		var EditPerson = Backbone.View.extend({
-			el : '.page',
-			render : function(options) {
-				var that = this;
-				if (options.person_id) {
-					var person = new Person({
-						id : options.person_id
-					});
-					person.fetch({
-						success : function(person) {
-							var template = _.template($('#new-person-template')
-									.html(), {
-								person : person
-							});
-							that.$el.html(template);
-						}
-					});
-				} else {
-					var template = _.template($('#new-person-template').html(),
-							{
-								person : null
-							});
-					this.$el.html(template);
-				}
-			},
-			events : {
-				'submit .new-person-form' : 'savePerson',
-				'click .deletePerson' : 'deletePerson'
-			},
-			savePerson : function(ev) {
-				personDetails = $(ev.currentTarget).serializeObject();
-				var person = new Person();
-				personDetails.person_id = personDetails.id;
-				console.log(personDetails);
-				person.save(personDetails, {
-					success : function(user) {
-						router.navigate('', {
-							trigger : true
-						});
-					}
-				})
-				return false;
-			},
-
-			deletePerson : function(ev) {
-				this.person.destroy({
-					success : function() {
-						router.navigate('', {
-							trigger : true
-						});
-					}
-				});
-				return false;
-			}
-		});
-
-		var editPerson = new EditPerson();
-
-		var ShowPerson = Backbone.View.extend({
-			el : '.page',
-			render : function(options) {
-				var that = this;
-				var person = new Person({
-					id : options.person_id
-				});
-				person.healthProfile.fetch({
-					success : function(person) {
-						var template = _.template($('#show-person-template')
-								.html(), {
-							person : person
-						});
-						that.$el.html(template);
-					}
-				});
-			}
-		});
-
-		var showPerson = new ShowPerson();
-
-		var DeletePerson = Backbone.View.extend({
-			el : '.page',
-			render : function(options) {
-				var person = new Person({
-					id : options.person_id
-				});
-				person.destroy({
-					success : function() {
-						router.navigate('', {
-							trigger : true
-						});
-					}
-				});
-				return false;
-			}
-		});
-
-		var deletePerson = new DeletePerson();
-
+		
 		var Router = Backbone.Router.extend({
 			routes : {
 				'' : "home",
 				'newPerson' : "editPerson",
 				'editPerson/:person_id' : "editPerson",
 				'deletePerson/:person_id' : "deletePerson",
-				'showPerson/:person_id' : "showPerson"
+				'showPerson/:person_id' : "showPerson",
+				'editPerson/:person_id/editHealthProfile/:healthprofile_id' : "editHealthProfile"
 			}
 		});
 
@@ -235,6 +158,12 @@
 				person_id : person_id
 			});
 		});
+		router.on('route:editHealthProfile', function(person_id, healthprofile_id) {
+			editHealthProfile.render({
+        person_id : person_id,
+        healthprofile_id : healthprofile_id
+      });
+    });
 
 		Backbone.history.start();
 	</script>

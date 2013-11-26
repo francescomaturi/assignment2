@@ -1,0 +1,47 @@
+<center><form class="form-horizontal" id="measureForm">
+
+	<div class="control-group">
+		<label class="control-label" for="inputMeasure">Measure</label>
+		<div class="controls">
+			<select name="measure" id="measure">
+				<option value="weight">Weight</option>
+				<option value="height">Height</option>
+			</select>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="inputMax">Max</label>
+		<div class="controls">
+			<div class="input-append">
+			  <input type="text" class="input-small" name="max" id="inputMax" placeholder="Max" />
+			  <span class="add-on">kg</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="control-group">
+		<label class="control-label" for="inputMax">Min</label>
+		<div class="controls">
+			<div class="input-append">
+				<input type="text" class="input-small" name="min" id="inputMin" placeholder="Min" />
+			  <span class="add-on">kg</span>
+			</div>
+		</div>
+	</div>
+
+</form>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("select#measure").change(function(){
+			var val = $("select#measure").val();
+			if(val == "weight"){
+				$("span.add-on").html("kg");
+			}else{
+				$("span.add-on").html("m");
+			}
+			$("input.input-small").attr("value","");
+		});
+	});
+</script>
