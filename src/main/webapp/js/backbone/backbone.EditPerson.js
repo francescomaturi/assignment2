@@ -24,8 +24,8 @@ var EditPerson = Backbone.View.extend({
 		var person = new Person();
 		person.save(personDetails, {
 			success : function(user) {
-				var id = user.get('person_id');
-				router.navigate('#/showPerson/'+ id, {trigger : true});
+				var person_id = personDetails.id ? personDetails.id : user.get('person_id');
+				router.navigate('#/showPerson/'+ person_id, {trigger : true});
 			}
 		});
 		return false;
