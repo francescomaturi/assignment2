@@ -15,6 +15,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import assignment2.utils.BirthDateAdapter;
 import assignment2.utils.DateAdapter;
+import assignment2.utils.DoubleAdapter;
 
 @XmlRootElement
 @Entity
@@ -75,6 +76,7 @@ public class Person {
 		this.person_id = person_id;
 	}
 
+	@XmlJavaTypeAdapter(DoubleAdapter.class)
 	public Double getHeight() {
 		return height;
 	}
@@ -83,6 +85,7 @@ public class Person {
 		this.height = height;
 	}
 
+	@XmlJavaTypeAdapter(DoubleAdapter.class)
 	public Double getWeight() {
 		return weight;
 	}
@@ -101,6 +104,7 @@ public class Person {
 	}
 
 	@XmlElement(name = "bmi")
+	@XmlJavaTypeAdapter(DoubleAdapter.class)
 	public Double getBmi() {
 		return weight / (height * height);
 	}

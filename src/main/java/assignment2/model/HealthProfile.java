@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import assignment2.utils.DateAdapter;
+import assignment2.utils.DoubleAdapter;
 
 @XmlRootElement
 @Entity
@@ -68,6 +69,7 @@ public class HealthProfile {
 		this.date = date;
 	}
 
+	@XmlJavaTypeAdapter(DoubleAdapter.class)
 	public Double getWeight() {
 		return weight;
 	}
@@ -76,6 +78,7 @@ public class HealthProfile {
 		this.weight = weight;
 	}
 
+	@XmlJavaTypeAdapter(DoubleAdapter.class)
 	public Double getHeight() {
 		return height;
 	}
@@ -85,6 +88,7 @@ public class HealthProfile {
 	}
 
 	@XmlElement(name = "bmi")
+	@XmlJavaTypeAdapter(DoubleAdapter.class)
 	public Double getBmi() {
 		return weight / (height * height);
 	}

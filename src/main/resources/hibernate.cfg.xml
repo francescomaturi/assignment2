@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" 
 "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<<<<<<< HEAD
 
 <hibernate-configuration>
 	<session-factory>
@@ -8,14 +9,28 @@
 		<property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
 		<property name="connection.driver_class">org.sqlite.JDBC</property>
 		<property name="connection.url">jdbc:sqlite:database/mydb.db</property>
+=======
+<hibernate-configuration>
+	<session-factory>
+		<property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
+		<property name="connection.driver_class">org.sqlite.JDBC</property>
+		<property name="connection.url">jdbc:sqlite:workspace2/folder/assignment2/database/mydb.db</property>
+>>>>>>> b0cc4bde7ed76518954df24a35d774fe2983ca99
 		<property name="connection.username"></property>
 		<property name="connection.password"></property>
 		<property name="hibernate.hbm2ddl.auto">update</property>
 		<property name="show_sql">true</property>
 		<property name="format_sql">true</property>
+<<<<<<< HEAD
 
 		<mapping class="assignment2.model.Person" />
 		<mapping class="assignment2.model.HealthProfile" />
 
 	</session-factory>
 </hibernate-configuration>
+=======
+		<mapping class="assignment2.model.Person" />
+		<mapping class="assignment2.model.HealthProfile" />
+	</session-factory>
+</hibernate-configuration>
+>>>>>>> b0cc4bde7ed76518954df24a35d774fe2983ca99

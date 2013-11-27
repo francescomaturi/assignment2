@@ -1,4 +1,9 @@
 /target
 
+/src/main/resources/hibernate.cfg.xml
+.settings
+.classpath
+.project
+
 .DS_Store
 .DS_Store?

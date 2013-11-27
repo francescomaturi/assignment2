@@ -14,7 +14,7 @@ import org.hibernate.criterion.Restrictions;
 
 import assignment2.model.Person;
 
-public class PeopleCompareDB {
+public class ComparisonDB {
 
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Person> birthdate(Date from, Date to) {
