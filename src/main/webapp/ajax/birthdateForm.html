@@ -1,34 +1,51 @@
-<div class="control-group">
-	<label class="control-label" for="inputBefore">From</label>
-	<div class="controls">
+<hr />
+<div class="row-fluid">
+  
+  <div class="span3 align-searchBtn">
+			
+		<div class="pull-right">
+			<div class="input-append date" id="dp3" 
+						data-date="" 
+						data-date-format="dd-mm-yyyy">
+	    	
+	    	<input class="input-small" type="text" id="inputFrom" 
+	    				 placeholder="From" name="from">
+	    				<span class="add-on"><i class="icon-th"></i></span>
+	  	</div>
+	  </div>
+	  
+	  <div class="myLabel"><label>From</label></div>
 		
-		<div class="input-append date" id="dp3" 
-					data-date="" 
-					data-date-format="dd-mm-yyyy">
-    	
-    	<input class="input-small" type="text" id="inputFrom" 
-    				 placeholder="From" name="from">
-    				<span class="add-on"><i class="icon-th"></i></span>
-  	</div>
+		<div style="clear:both"></div>
+	</div>
+	
+	<div class="span3 align-searchBtn">
+
+	  <div class="myLabel" style="float:left"><label>To</label></div>
+	  
+	  <div class="pull-left">
+			<div class="input-append date" id="dp2" 
+						data-date="" 
+						data-date-format="dd-mm-yyyy">
+	    	
+	    	<input class="input-small" type="text" id="inputTo" 
+	    				 placeholder="To" name="to">
+	    				<span class="add-on"><i class="icon-th"></i></span>
+	  	</div>
+	  </div>
+	  
+	  <div style="clear:both"></div>
 	
 	</div>
+
+	
+	<div class="span4">
+    <button type="submit" class="btn btn-primary btn-large pull-left" style="margin-left: -40px;">
+      <i class="icon-search icon-white"></i> Search
+    </button>
+  </div>
 </div>
 
-<div class="control-group">
-	<label class="control-label" for="inputMax">To</label>
-	<div class="controls">
-
-		<div class="input-append date" id="dp2" 
-					data-date="" 
-					data-date-format="dd-mm-yyyy">
-    	
-    	<input class="input-small" type="text" id="inputTo" 
-    				 placeholder="To" name="to">
-    				<span class="add-on"><i class="icon-th"></i></span>
-  	</div>
-
-	</div>
-</div>
 
 <script type="text/javascript">
   $(document).ready(function(){

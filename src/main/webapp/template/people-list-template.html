@@ -1,8 +1,8 @@
-<script type="text/template" id="person-list-template">
-		<a href="#/newPerson" class="btn btn-success btn-large">
-			<i class="icon-plus icon-white"></i> New Person
-		</a>
-		
+<script type="text/template" id="people-list-template"> 
+    <br/>
+    <% if (people.length > 0) { %>
+    
+		<h3>People Found: <%= people.length %></h3>
 		<hr/>
 		<table class="table table-hover striped">
 			<thead>
@@ -29,7 +29,7 @@
 						<td><%= parseFloat(p.get('weight')).toPrecision(5) %></td>
 						<td><%= parseFloat(p.get('height')).toPrecision(5) %></td>
 						<td><%= parseFloat(p.get('bmi')).toPrecision(5) %></td>
-						<td><%= p.get('birthdate')%></td>
+						<td><%= p.get('birthdate') %></td>
 
 						<td>
 							<a href="#/editPerson/<%= p.get('person_id') %>" class="btn btn-primary">
@@ -44,4 +44,9 @@
 				<% })%>
 			</tbody>
 		</table>
-	</script>
+
+    <% } else { %>
+      <h3>No People Found! </h3>
+    <% } %>
+
+</script>

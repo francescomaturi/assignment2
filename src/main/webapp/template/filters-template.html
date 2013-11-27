@@ -1,0 +1,46 @@
+<script type="text/template" id="filters-template">
+		 
+  <fieldset class="scheduler-border">
+    <legend class="scheduler-border">Filters</legend>
+    
+      <form class="form-horizontal searchForm">      
+       
+        <div class="control-group">
+          <label class="control-label input-label">Search People by: </label>
+          <div class="controls">
+            <select name="condition" id="condition">
+              <option value="all">-- All People --</option>
+              <option value="measure">Measure</option>
+              <option value="birthdate">Birthdate</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="searchForm-controls"></div>     
+      
+      </form>
+    </fieldset>
+
+    <div id="peopleList"></div>
+
+    <script type="text/javascript">
+      $(document).ready(function(){
+
+        $("select#condition").change(function(){
+          var val = $("select#condition").val();
+          if (val == "measure"){
+            $("div.searchForm-controls").load("/../ajax/measureForm.html");
+            $("div.searchForm-submit").removeClass("hide");
+          } else if (val == "birthdate"){
+            $("div.searchForm-controls").load("/../ajax/birthdateForm.html");
+            $("div.searchForm-submit").removeClass("hide");
+          } else {
+            $("div.searchForm-controls").html("");
+            $("div.searchForm-submit").addClass("hide");
+            $("form.searchForm").submit();
+          }
+        });  
+      });
+	  </script>
+
+</script>

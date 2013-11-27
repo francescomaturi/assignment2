@@ -1,32 +1,64 @@
-<div class="control-group">
-	<label class="control-label" for="inputMeasure">Measure</label>
-	<div class="controls">
-		<select name="measure" id="measure">
-			<option value="weight">Weight</option>
-			<option value="height">Height</option>
-		</select>
+<hr />
+<div class="row-fluid">
+	<div class="span4 align-searchBtn">
+			
+			<div class="pull-right">
+				<select name="measure" id="measure" class="pull-left">
+					<option value="weight">Weight</option>
+					<option value="height">Height</option>
+				</select>
+			</div>
+			
+			<div class="myLabel" style="float:right;"><label>Measure</label></div>
+			
+			<div style="clear:both"></div>
 	</div>
+
+
+	<div class="span3 align-searchBtn">
+		
+		
+		<div class="pull-right" style="margin-right: 30px;">
+			<div class="input-append">
+				<input type="text" class="input-small" name="min" id="inputMin"
+					placeholder="Min" /> <span class="add-on">kg</span>
+			</div>
+		</div>
+		
+		<div class="myLabel"><label>Min</label></div>
+		
+		<div style="clear:both"></div>
+	</div>
+	
+	<div class="span3 align-searchBtn">
+    
+    <div class="myLabel" style="float:left;"><label>Max</label></div>
+    <div class="pull-left">
+      <div class="input-append">
+        <input type="text" class="input-small" name="max" id="inputMax"
+          placeholder="Max" /> <span class="add-on">kg</span>
+      </div>
+    </div>
+    
+    <div style="clear:both"></div>
+  </div>
+
+	<div class="span2">
+		<button type="submit" class="btn btn-primary btn-large" style="margin-left: -20px;">
+			<i class="icon-search icon-white"></i> Search
+		</button>
+	</div>
+
 </div>
 
-<div class="control-group">
-	<label class="control-label" for="inputMax">Max</label>
-	<div class="controls">
-		<div class="input-append">
-		  <input type="text" class="input-small" name="max" id="inputMax" placeholder="Max" />
-		  <span class="add-on">kg</span>
-		</div>
-	</div>
-</div>
-
-<div class="control-group">
-	<label class="control-label" for="inputMax">Min</label>
-	<div class="controls">
-		<div class="input-append">
-			<input type="text" class="input-small" name="min" id="inputMin" placeholder="Min" />
-		  <span class="add-on">kg</span>
-		</div>
-	</div>
-</div>
+<style>
+  .span3{
+    margin-left: 0px !important;
+  }
+  .span2{
+    margin-left: 0px !important;
+  }
+</style>
 
 <script type="text/javascript">
 	$(document).ready(function(){
