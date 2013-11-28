@@ -14,15 +14,6 @@ public class Hibernate {
 
 	static {
 		Configuration configuration = new Configuration();
-		// configuration.setProperty("hibernate.dialect",
-		// "org.hibernate.dialect.SQLiteDialect");
-		// configuration.setProperty("hibernate.connection.driver_class",
-		// "org.sqlite.JDBC");
-		// configuration.setProperty("hibernate.connection.url", "jdbc:sqlite:"
-		// + "/database/mydb.db");
-		// configuration.setProperty("hibernate.hbm2ddl.auto", "update");
-		// configuration.setProperty("hibernate.show_sql", "true");
-		// configuration.configure("hibernate.cfg.xml");
 		configuration.configure();
 
 		Properties properties = configuration.getProperties();

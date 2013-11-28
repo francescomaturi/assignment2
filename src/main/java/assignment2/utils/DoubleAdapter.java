@@ -15,7 +15,7 @@ public class DoubleAdapter extends XmlAdapter<String, Double> {
 
 	@Override
 	public Double unmarshal(String arg0) throws Exception {
-		return decimalFormat.parse(arg0).doubleValue();
+		return decimalFormat.parse(arg0.replace('.', ',')).doubleValue();
 	}
 
 }
