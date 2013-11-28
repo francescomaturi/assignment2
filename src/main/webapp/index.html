@@ -125,6 +125,7 @@
 			});
 		});
 		router.on('route:searchName', function(name) {
+			$(".page").find("div#peopleList").html("<center><img src='img/loading.gif' class='img-loading' /></center>");
 			personList.searchName({ name : name });
 		});
 		Backbone.history.start();
