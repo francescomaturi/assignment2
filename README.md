@@ -3,6 +3,21 @@ DOCUMENTATION Assignment #2: Francesco Maturi & Lorenzo Rigato
 
 All code is available @ [our github repository](https://github.com/francescomaturi/assignment2).
 
+Hibernate Configuration:
+----------------
+The database used is in `database/mydb.db`, we need to configure hibernate to find it: please go to 
+`src/main/resources/hibernate.cfg.xml` file and at connection url property type the following:
+
+* For Mac users: `jdbc:sqlite:database/mydb.db`
+* For Unix users: `jdbc:sqlite:<your_directory>/<path_to_this_project>/database/mydb.db`
+
+Database:
+----------------
+The database used is sqlite, it contains all ice hockey 
+people from Ontario present in [dbpedia.org](http://dbpedia.org/About).
+
+To fetch and parse data from dbpedia it was used [Apache Jena](http://jena.apache.org/): a free and open source Java framework for building Semantic Web and Linked Data applications. 
+
 REST Service:
 ----------------
 All our services support both json and xml format for response. 
