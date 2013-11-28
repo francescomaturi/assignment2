@@ -146,12 +146,13 @@ public class ComparisonDB {
 
 			List<Criterion> criterias = new ArrayList<Criterion>();
 
-			for (int i = 0; i < text.length; i++) {
+			for (int i = 0; i < text.length && i < 3; i++) {
 				criterias.add(Restrictions.ilike("firstname", text[i],
 						MatchMode.ANYWHERE));
 				criterias.add(Restrictions.ilike("lastname", text[i],
 						MatchMode.ANYWHERE));
 			}
+
 			Criterion[] arr = new Criterion[criterias.size()];
 
 			query.add(Restrictions.or(criterias.toArray(arr)));
