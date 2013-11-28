@@ -83,20 +83,26 @@ public class PersonService {
 				&& json.getLastname() != null && json.getBirthdate() != null
 				&& json.getWeight() != null && json.getHeight() != null) {
 
-			// metto nella history il corrente perche ora lo aggiorno
-			HealthProfileDB.saveHealthProfile(new HealthProfile(dbPerson
-					.getPerson_id(), dbPerson.getWeight(),
-					dbPerson.getHeight(), dbPerson.getLastupdate()));
+			// se ho aggiornato anche i valori di peso e altezza
+			if (dbPerson.getHeight() != json.getHeight()
+					|| dbPerson.getWeight() != json.getWeight()) {
+
+				// metto nella history il corrente perche ora lo aggiorno
+				HealthProfileDB.saveHealthProfile(new HealthProfile(dbPerson
+						.getPerson_id(), dbPerson.getWeight(), dbPerson
+						.getHeight(), dbPerson.getLastupdate()));
+
+				// aggiorno i valori correnti
+				dbPerson.setHeight(json.getHeight());
+				dbPerson.setWeight(json.getWeight());
+				dbPerson.setLastupdate(new Date());
+
+			}
 
 			// aggionro i dati della persona
 			dbPerson.setFirstname(json.getFirstname());
 			dbPerson.setLastname(json.getLastname());
 			dbPerson.setBirthdate(json.getBirthdate());
-
-			// aggiorno i valori correnti
-			dbPerson.setHeight(json.getHeight());
-			dbPerson.setWeight(json.getWeight());
-			dbPerson.setLastupdate(new Date());
 
 			// aggiorno nel db la persona
 			dbPerson = PersonDB.updatePerson(dbPerson);
