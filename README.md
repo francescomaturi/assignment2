@@ -1,7 +1,7 @@
 DOCUMENTATION Assignment #2: Francesco Maturi & Lorenzo Rigato
 ===========
 
-All code is available @ [our github repository](https://github.com/francescomaturi/assignment2).
+All code is available @ [our github repository](https://github.com/francescomaturi/assignment2) licensed under the Apache License, Version 2.0.
 
 Database:
 ----------------
@@ -151,8 +151,14 @@ To make a request outside our domain we have to set a flag for google chrome tha
 **MAC users:**
 write on terminal `alias chrome="open /Applications/Google\ Chrome.app/ --args --disable-web-security"`
 
+
 **OTHER users:**
 write on terminal `alias chrome="open <Your_Google_Chrome_path> --args --disable-web-security"`
 
 With that command we create an alias to chrome to open it without web security flag so we can make requests to any
 from our local files.
+
+Eclipse Import
+----------------------
+
+Import this project in eclipse as a Maven project.
