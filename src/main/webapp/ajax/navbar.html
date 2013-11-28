@@ -20,8 +20,9 @@
 
 <script type="text/javascript">
 
-	$(document).ready(function() {
-		$.fn.pressEnter = function(fn) {
+	 $(document).ready(function() {
+		 
+		 /*$.fn.pressEnter = function(fn) {
 
 			return this.each(function() {
 				$(this).bind('enterPress', fn);
@@ -31,11 +32,12 @@
 					}
 				})
 			});
-		};
-
-		$("input#searchName").pressEnter(function() {
+		}; */
+	
+		$("input#searchName").keydown(function() {
 			var val = $("input#searchName").val();
-			window.location = window.location.pathname + "#/searchName/" + val;
+		      window.location = window.location.pathname + "#/searchName/" + val;
 		});
+		
 	});
 </script>
