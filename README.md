@@ -1,19 +1,7 @@
-DOCUMENTATION Assignment2
+DOCUMENTATION Assignment #2: Francesco Maturi & Lorenzo Rigato
 ===========
 
-Chrome Settings
-----------------
-
-To make a request outside our domain we have to set a flag for google chrome that allows make requests for any domain.
-
-**MAC users:**
-write on terminal `alias chrome="open /Applications/Google\ Chrome.app/ --args --disable-web-security"`
-
-**OTHER users:**
-write on terminal `alias chrome="open <Your_Google_Chrome_path> --args --disable-web-security"`
-
-With that command we create an alias to chrome to open it without web security flag so we can make requests to any
-from our local files.
+All code is available @ [our github repository](https://github.com/francescomaturi/assignment2).
 
 REST Service:
 ----------------
@@ -73,3 +61,49 @@ Returns all the people that are in the specified range of height or weight.
 **GET  /search/name?q=TEXT_TO_SEARCH**
 
 Returns the people that have firstname or lastname matching the TEXT_TO_SEARCH 
+
+Client
+----------------
+
+This is a simple introduction to understand how to use that web application.
+
+This client is implemented using [Backbone.js](http://backbonejs.org/) which is a javascript library that easily allows to make REST request and manage their response on a html page.
+
+### Usage
+
+Start tomcat, open your browser and navigate the the follow url: `http://localhost:8080/RESTService/`
+
+It will show a view that contains the list of the people contained in the database 
+like the following screenshot.
+
+You can also search people by Firstname, Lastname, Fullname etc, 
+just typing something in the search bar in the navbar on top.
+
+Also, you can search people by their weight, height or birthdate just filling the filter form and press "Search" button.
+
+![Alt text](doc/index.png)
+
+If you click on a specific person it will show a view in which there are all the informations of that person, his current health profile and his health profile history.
+
+You can add a new health profile for that person (in this case the previous one will be shown in the health profile history table), or edit / delete each health profile present in the history.
+
+Finally you can also edit or delete that person.
+
+![Alt text](doc/show-person.png)
+
+Just for an example, the following screenshot contains the form for the editing of a person.
+
+![Alt text](doc/edit-person.png)
+
+### Chrome and CORS Request
+
+To make a request outside our domain we have to set a flag for google chrome that allows make requests for any domain.
+
+**MAC users:**
+write on terminal `alias chrome="open /Applications/Google\ Chrome.app/ --args --disable-web-security"`
+
+**OTHER users:**
+write on terminal `alias chrome="open <Your_Google_Chrome_path> --args --disable-web-security"`
+
+With that command we create an alias to chrome to open it without web security flag so we can make requests to any
+from our local files.
