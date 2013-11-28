@@ -3,6 +3,13 @@ DOCUMENTATION Assignment #2: Francesco Maturi & Lorenzo Rigato
 
 All code is available @ [our github repository](https://github.com/francescomaturi/assignment2).
 
+Database:
+----------------
+The database used is sqlite, it contains all ice hockey 
+people from Ontario present in [dbpedia.org](http://dbpedia.org/About).
+
+To fetch and parse data from dbpedia it was used [Apache Jena](http://jena.apache.org/): a free and open source Java framework for building Semantic Web and Linked Data applications. 
+
 Hibernate Configuration:
 ----------------
 The database used is in `database/mydb.db`, we need to configure hibernate to find it: please go to 
@@ -10,13 +17,6 @@ The database used is in `database/mydb.db`, we need to configure hibernate to fi
 
 * For Mac users: `jdbc:sqlite:database/mydb.db`
 * For Unix users: `jdbc:sqlite:<your_directory>/<path_to_this_project>/database/mydb.db`
-
-Database:
-----------------
-The database used is sqlite, it contains all ice hockey 
-people from Ontario present in [dbpedia.org](http://dbpedia.org/About).
-
-To fetch and parse data from dbpedia it was used [Apache Jena](http://jena.apache.org/): a free and open source Java framework for building Semantic Web and Linked Data applications. 
 
 REST Service:
 ----------------
@@ -76,6 +76,11 @@ Returns all the people that are in the specified range of height or weight.
 **GET  /search/name?q=TEXT_TO_SEARCH**
 
 Returns the people that have firstname or lastname matching the TEXT_TO_SEARCH 
+
+**GET  /measures**
+
+Returns the list of measures our model supports in plain text and separated by commas as follows: `weight,height,bmi,date`
+
 
 Client
 ----------------
