@@ -78,7 +78,7 @@ public class SearchService {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public List<Person> getPeopleByMeasure(@QueryParam("q") String query) {
 
-		if (query != null) {
+		if (query != null && !query.matches("\\s*")) {
 
 			String[] string = query.trim().split("\\s+");
 
