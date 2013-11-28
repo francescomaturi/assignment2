@@ -7,7 +7,7 @@
 
 		<property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
 		<property name="connection.driver_class">org.sqlite.JDBC</property>
-		<property name="connection.url">jdbc:sqlite:workspace2/assignment2/database/mydb.db</property>
+		<property name="connection.url">jdbc:sqlite:database/mydb.db</property>
 		<property name="connection.username"></property>
 		<property name="connection.password"></property>
 		<property name="hibernate.hbm2ddl.auto">update</property>
