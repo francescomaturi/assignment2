@@ -10,13 +10,13 @@
 		  <center>
 		  <div class="well" style="margin-bottom:10px; padding-bottom:28px">
 				<div class="span3">
-				  <p class="lead">Weight: <%= parseFloat(person.get('weight')).toPrecision(5) + " kg" %></p>
+				  <p class="lead">Weight: <%= person.get('weight') + " kg" %></p>
 				</div>
 				<div class="span3">
-					<p class="lead">Height: <%= parseFloat(person.get('height')).toPrecision(5) + " m" %></p>
+					<p class="lead">Height: <%= person.get('height') + " m" %></p>
 				</div>
 				<div class="span3">
-					<p class="lead">BMI: <%= parseFloat(person.get('bmi')).toPrecision(5) + " kg/m<sup>2</sup>" %></p>
+					<p class="lead">BMI: <%= person.get('bmi') + " kg/m<sup>2</sup>" %></p>
 				</div>
 				<div class="span3">
 					<a href="#/editPerson/<%= person.get('person_id') %>/editHealthProfile" class="btn btn-success">
@@ -53,11 +53,11 @@
 					<tr>
 						<td><%= index + 1 %></td>
 						
-						<td><%= parseFloat(healthProfile.get('weight')).toPrecision(5) %></td>
+						<td><%= healthProfile.get('weight') %></td>
 						
-						<td><%= parseFloat(healthProfile.get('height')).toPrecision(5) %></td>
+						<td><%= healthProfile.get('height') %></td>
 
-						<td><%= parseFloat(healthProfile.get('bmi')).toPrecision(5) %></td>
+						<td><%= healthProfile.get('bmi') %></td>
 
 						<td><%= healthProfile.get('date').substring(0,10) %></td>
 
