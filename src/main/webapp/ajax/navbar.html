@@ -26,9 +26,9 @@
 		$("input#searchName").keyup(function(e) {
 			var val = $("input#searchName").val();
 			if(val === ""){
-				window.location = window.location.pathname + "#/searchName";
+				window.location = window.location.pathname + "#/searchName?q=";
 			}else {
-				window.location = window.location.pathname + "#/searchName/" + val;	
+				window.location = window.location.pathname + "#/searchName?q=" + val;	
 			}
 			
 		});
