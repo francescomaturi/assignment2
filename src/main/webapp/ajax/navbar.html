@@ -11,6 +11,7 @@
       	 <input type="text" class="input-xlarge search-query" 
       	     placeholder="Search People" id="searchName"
       	     style="margin-top: 6px; margin-left:20px; background-color:#4b4b4b; border-color:#282828; color:#c0c0c0;" />
+      	 
       	 </li>
 
    		</ul>
@@ -21,23 +22,16 @@
 <script type="text/javascript">
 
 	 $(document).ready(function() {
-		 
-		 /*$.fn.pressEnter = function(fn) {
-
-			return this.each(function() {
-				$(this).bind('enterPress', fn);
-				$(this).keyup(function(e) {
-					if (e.keyCode == 13) {
-						$(this).trigger("enterPress");
-					}
-				})
-			});
-		}; */
 	
-		$("input#searchName").keydown(function() {
+		$("input#searchName").keyup(function(e) {
 			var val = $("input#searchName").val();
-		      window.location = window.location.pathname + "#/searchName/" + val;
+			if(val === ""){
+				window.location = window.location.pathname + "#/searchName";
+			}else {
+				window.location = window.location.pathname + "#/searchName/" + val;	
+			}
+			
 		});
-		
+
 	});
 </script>

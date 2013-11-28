@@ -32,7 +32,10 @@ People = Backbone.Collection.extend({
 	model : Person,
 	url : '/person',
 	parse : function(response) {
-		return response.person;
+		if (response) {
+			return response.person;
+		} else
+			return null;
 	}
 });
 
