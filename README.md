@@ -12,11 +12,20 @@ To fetch and parse data from dbpedia it was used [Apache Jena](http://jena.apach
 
 Hibernate Configuration:
 ----------------
-The database used is in `database/mydb.db`, we need to configure hibernate to find it: please go to 
+The SQLite database for this project is located in `database/mydb.db` and we integrate SQLite with Hibernate using an hibernate dialect to support SQLite that is on [github](https://github.com/gwenn/sqlite-dialect).
+
+To use Hibernate properly you need to configure it to find the database: please go to 
 `src/main/resources/hibernate.cfg.xml` file and at connection url property type the following:
 
-* For Mac users: `jdbc:sqlite:database/mydb.db`
-* For Unix users: `jdbc:sqlite:<your_directory>/<path_to_this_project>/database/mydb.db`
+* For Mac users:
+
+`jdbc:sqlite:<eclipse_application_path>/Contents/MacOS/database/mydb.db`
+
+* For Unix users:
+
+`jdbc:sqlite:<path_to_this_project_from_your_home_directory>/database/mydb.db`
+
+
 
 REST Service:
 ----------------
@@ -115,7 +124,27 @@ Just for an example, the following screenshot contains the form for the editing 
 
 ![Alt text](doc/edit-person.png)
 
-### Chrome and CORS Request
+
+Running the project under the standalone server
+----------------
+
+This project support also the standalone server but it requires some different configuration from Tomcat. Hibernate configuration file requires this connection url property: `jdbc:sqlite:database/mydb.db`. The last cofiguration is in `src/main/webapp/index.html`. Just change the base url configuration of backbone.js 
+
+**From** 
+
+` $.ajaxPrefilter(function(options, originalOptions, jqXR) {
+                        options.url = "http://localhost:8080/RESTService/rest"
+                                        + options.url;
+                });` 
+
+**To**
+
+` $.ajaxPrefilter(function(options, originalOptions, jqXR) {
+                        options.url = "http:/<YOUR_IP_ADDRESS>:5900/"
+                                        + options.url;
+                });`.
+
+**Chrome and CORS Request**
 
 To make a request outside our domain we have to set a flag for google chrome that allows make requests for any domain.
 
