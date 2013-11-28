@@ -1,5 +1,5 @@
 var BirthdateSearch = Backbone.Collection.extend({
-	url : '/person/birthdate',
+	url : '/search/birthdate',
 	parse : function(response) {
 		if (response) {
 			return response.person;
@@ -9,7 +9,7 @@ var BirthdateSearch = Backbone.Collection.extend({
 });
 
 var MeasureSearch = Backbone.Collection.extend({
-	url : '/person/profile',
+	url : '/search/profile',
 	parse : function(response) {
 		if (response) {
 			return response.person;
@@ -19,7 +19,7 @@ var MeasureSearch = Backbone.Collection.extend({
 });
 
 var NameSearch = Backbone.Collection.extend({
-	url : '/person/search',
+	url : '/search/name',
 	parse : function(response) {
 		if (response) {
 			return response.person;

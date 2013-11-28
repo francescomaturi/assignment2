@@ -7,3 +7,4 @@ src/main/resources/hibernate.cfg.xml
 
 .DS_Store
 .DS_Store?
+/bin
