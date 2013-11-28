@@ -1,7 +1,7 @@
 DOCUMENTATION Assignment #2: Francesco Maturi & Lorenzo Rigato
 ===========
 
-All code is available @ [our github repository](https://github.com/francescomaturi/assignment2) licensed under the Apache License, Version 2.0.
+All code is available @ [our github repository](https://github.com/francescomaturi/assignment2) Licensed under the Apache License, Version 2.0.
 
 Database:
 ----------------
