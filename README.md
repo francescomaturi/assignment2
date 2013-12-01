@@ -132,17 +132,22 @@ This project support also the standalone server but it requires some different c
 
 **From** 
 
-` $.ajaxPrefilter(function(options, originalOptions, jqXR) {
+```javascript 
+$.ajaxPrefilter(function(options, originalOptions, jqXR) {
                         options.url = "http://localhost:8080/RESTService/rest"
                                         + options.url;
-                });` 
+                });
+``` 
 
 **To**
 
-` $.ajaxPrefilter(function(options, originalOptions, jqXR) {
+```javascript 
+
+$.ajaxPrefilter(function(options, originalOptions, jqXR) {
                         options.url = "http:/<YOUR_IP_ADDRESS>:5900/"
                                         + options.url;
-                });`.
+                });
+```
 
 **Chrome and CORS Request**
 
